@@ -5,6 +5,7 @@ tags:
 - automation
 - node
 - grunt
+- talks
 status: publish
 type: post
 ---
