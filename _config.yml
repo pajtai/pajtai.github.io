@@ -78,5 +78,6 @@ theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
+- type: git
   repo: git@github.com:pajtai/pajtai.github.io.git
+  branch: gh-pages
