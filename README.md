@@ -5,13 +5,12 @@ Create with [Hexo](https://hexo.io/).
 To develop
 
 ```
-hexo server
+npm start
 ```
 
 To deploy:
 
 ```
-hexo clean
-hexo generate --deploy
+npm run deploy
 ```
 
