@@ -72,6 +72,8 @@ pagination_dir: page
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
+mathjax:
+  cdn: https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
 ## Themes: https://hexo.io/themes/
 theme: cactus
 
