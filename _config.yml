@@ -82,6 +82,9 @@ deploy:
   repo: git@github.com:pajtai/pajtai.github.io.git
   branch: master
 
+marked:
+  gfm: true
+  breaks: false
 theme_config:
   colorscheme: white
   posts_overview:
