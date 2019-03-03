@@ -1,6 +1,7 @@
 ---
 title: Debugging is a funnel
 date: 2015-08-14
+updated: 2015-08-14
 tags:
 - debugging
 ---

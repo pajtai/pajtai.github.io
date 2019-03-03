@@ -1,6 +1,7 @@
 ---
 title: Named curies
 date: 2013-12-06
+updated: 2013-12-06
 tags:
 - javascript
 - currying

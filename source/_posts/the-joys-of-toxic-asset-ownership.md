@@ -1,6 +1,7 @@
 ---
 title: The joys of toxic asset ownership
 date: 2010-06-11
+updated: 2010-06-11
 tags:
 - economics
 - planet money

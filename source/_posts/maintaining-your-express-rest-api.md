@@ -1,6 +1,7 @@
 ---
 title: Maintaining your Express REST api
 date: 2018-09-26
+updated: 2018-09-26
 tags:
 - javascript
 - rest

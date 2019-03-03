@@ -1,6 +1,7 @@
 ---
 title: Build automation
 date: 2013-01-18
+updated: 2013-01-18
 tags:
 - automation
 - node

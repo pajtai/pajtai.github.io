@@ -1,6 +1,7 @@
 ---
 title: Javascript quizzes
 date: 2012-02-05
+updated: 2012-02-05
 tags:
 - javascript
 - quizzes

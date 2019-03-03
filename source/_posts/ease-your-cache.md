@@ -1,6 +1,7 @@
 ---
 title: Ease your cache
 date: 2013-01-13
+updated: 2013-01-13
 tags:
 - javascript
 - caching

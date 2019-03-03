@@ -1,6 +1,7 @@
 ---
 title: It's hip to be square (or rectangular) - solving equations with matrices
 date: 2019-01-05 22:39:25
+updated: 2019-01-05 22:39:25
 katex: true
 tags:
 - linear algebra

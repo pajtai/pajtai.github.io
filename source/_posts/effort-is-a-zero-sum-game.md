@@ -1,6 +1,7 @@
 ---
 title: Effort is a zero sum game
 date: 2016-01-16
+updated: 2016-01-16
 tags:
 - work
 - effort

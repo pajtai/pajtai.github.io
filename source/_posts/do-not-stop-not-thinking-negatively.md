@@ -1,6 +1,7 @@
 ---
 title: Do not stop not thinking negatively
 date: 2012-11-23
+updated: 2012-11-23
 tags:
 - logic
 - style

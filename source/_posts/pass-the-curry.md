@@ -1,6 +1,7 @@
 ---
 title: Pass the curry
 date: 2013-09-16
+updated: 2013-09-16
 tags:
 - javascript
 - currying
