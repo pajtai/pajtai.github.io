@@ -103,3 +103,5 @@ theme_config:
   google_analytics:
     enabled: true
     id: 'UA-4145174-19'
+sitemap:
+  path: sitemap.xml
