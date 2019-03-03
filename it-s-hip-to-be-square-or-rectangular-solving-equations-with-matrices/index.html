@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Peter Ajtai">
 <meta property="og:description" content="Arranging numbers in rectangles to do math turns out to often be more efficient than iteration. Sometimes you have to solve a bunch of equations. Let’s take a simple example. Let’s say  you’re convert">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-01-06T08:38:22.216Z">
+<meta property="og:updated_time" content="2019-01-06T06:39:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="It&#39;s hip to be square (or rectangular) - solving equations with matrices">
 <meta name="twitter:description" content="Arranging numbers in rectangles to do math turns out to often be more efficient than iteration. Sometimes you have to solve a bunch of equations. Let’s take a simple example. Let’s say  you’re convert">
@@ -292,6 +292,22 @@ for much larger numbers of unkowns too…. and those are a real pain to do by ha
 </footer>
 
     </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+
+<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML></script>
 </body>
 </html>
 <!-- styles -->
