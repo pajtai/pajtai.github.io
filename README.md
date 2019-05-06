@@ -1,6 +1,8 @@
 # Peter Ajtai's Blog
 
-Create with [Hexo](https://hexo.io/).
+https://pajtai.github.io/
+
+Created with [Hexo](https://hexo.io/).
 
 To develop
 
