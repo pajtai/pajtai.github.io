@@ -11,14 +11,17 @@ const file = `
     <!-- Load d3.js and c3.js -->
     <script src="/browser-wars/d3.v5.min.js" charset="utf-8"></script>
     <script src="/browser-wars/c3-0.7.15/c3.min.js"></script>
-        <style>
+    <style>
         body {
             font-family: Vazir, sans-serif;
             text-align: center;
         }
+        p, .c3-chart-arcs-title {
+            font-size: 1rem;
+        }
         @media only screen and (max-width: 600px) {
-            p {
-                font-size: 2rem;
+            p, .c3-chart-arcs-title {
+                font-size: 1.7rem;
             }
         }
     </style>
