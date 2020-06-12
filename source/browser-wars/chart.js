@@ -2,6 +2,7 @@ let data = getData();
 
 let chart1 = c3.generate({
     bindto: '#chart1',
+    responsive: true,
     donut: {
         title: "Browser Usage"
     },
