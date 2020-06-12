@@ -1,4 +1,7 @@
-
+'use strict';
+const fs = require('fs');
+const hash = process.argv[2];
+const file = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,8 +15,11 @@
 <body>
     <div id="chart1"></div>
     <div id="chart2"></div>
-    <script src="/browser-wars/builds/data.1591943559.min.js"></script>
-    <script src="/browser-wars/builds/chart.1591943559.min.js"></script>
+    <script src="/browser-wars/builds/data.${hash}.min.js"></script>
+    <script src="/browser-wars/builds/chart.${hash}.min.js"></script>
     <a href="https://gs.statcounter.com/browser-market-share/desktop/worldwide/#monthly-200901-201807">Data Source</a>
 </body>
 </html>
+`;
+
+fs.writeFileSync('source/browser-wars/index.html', file);
