@@ -13,6 +13,8 @@ const file = `
     <script src="/browser-wars/c3-0.7.15/c3.min.js"></script>
 </head>
 <body>
+    <h1>The Browser Wars</h1>
+    <p>Hover or click on the timeseries to pause the animation.</p>
     <div id="chart1"></div>
     <div id="chart2"></div>
     <script src="/browser-wars/builds/data.${hash}.min.js"></script>
