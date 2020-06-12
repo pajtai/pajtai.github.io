@@ -2,6 +2,7 @@ let data = getData();
 
 let chart1 = c3.generate({
     bindto: '#chart1',
+    responsive: true,
     donut: {
         title: "Browser Usage"
     },
@@ -17,9 +18,9 @@ let chart1 = c3.generate({
         ],
         type : 'donut',
         order: null,
-        transition: {
-            duration: 0
-        }
+        // transition: {
+        //     duration: 0
+        // }
     }
 });
 
@@ -73,9 +74,9 @@ let interval = setInterval(function() {
         chart1.load({ columns: datum.data });
         chart2.tooltip.show({ data: { x: new Date(datum.title + "-01") }});
         document.getElementsByClassName('c3-tooltip')[0].style.visibility = 'hidden';
-        ++index;
+        index += 3;
 
-}, 100);
+}, 1000);
 
 function getData() {
     return [
