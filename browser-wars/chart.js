@@ -59,7 +59,15 @@ let lineChartConfigs = {
 
 data.forEach(function(datum) {
     lineChartConfigs.data.columns[0].push(datum.title + "-1");
-    for (let i=0; i<7; 1="" ++i)="" {="" linechartconfigs.data.columns[i="" +="" 1].push(datum.data[i][1]);="" }="" });="" let="" chart2="c3.generate(lineChartConfigs);" index="0;" chart2.tooltip.show({="" x:="" })="" interval="setInterval(function()" if="" (index=""> data.length - 1) { index = 0; }
+    for (let i=0; i<7; ++i) {
+        lineChartConfigs.data.columns[i + 1].push(datum.data[i][1]);
+    }
+});
+let chart2 = c3.generate(lineChartConfigs);
+let index = 0;
+chart2.tooltip.show({ x: 1 })
+let interval = setInterval(function() {
+    if (index > data.length - 1) { index = 0; }
         let datum = data[index];
         d3.select('#chart1 .c3-chart-arcs-title').node().innerHTML = datum.title;
         chart1.load({ columns: datum.data });
@@ -1396,4 +1404,4 @@ function getData() {
                 ['Other', 0.4],
             ]
         }];
-}</7;>
+}
