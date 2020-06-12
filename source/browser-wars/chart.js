@@ -1,8 +1,15 @@
 (function(c3, d3, getData) {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
     var data = getData();
+    var size = Math.min(w,h)/2;
     var chart1 = c3.generate({
         bindto: '#chart1',
         responsive: true,
+        size: {
+            // width: w,
+            height: size
+        },
         donut: {
             title: 'Browser Usage'
         },
@@ -24,7 +31,7 @@
             tooltip: {
                 show: false
             }
-        }
+        },
     });
 
     var lineChartConfigs = {
