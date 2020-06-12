@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- Load c3.css -->
     <link href="/browser-wars/c3-0.7.15/c3.css" rel="stylesheet">
 
     <!-- Load d3.js and c3.js -->
     <script src="/browser-wars/d3.v5.min.js" charset="utf-8"></script>
     <script src="/browser-wars/c3-0.7.15/c3.min.js"></script>
+    <style>
+        body {
+            font-family: Vazir, sans-serif;
+            text-align: center;
+        }
+        p, .c3-chart-arcs-title {
+            font-size: 1rem;
+        }
+        @media only screen and (max-width: 600px) {
+            p, .c3-chart-arcs-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <h1>The Browser Wars</h1>
+    <p>Hover or click on the timeseries to pause the animation.</p>
     <div id="chart1"></div>
     <div id="chart2"></div>
     <script src="/browser-wars/data.js"></script>
