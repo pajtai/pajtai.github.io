@@ -21,7 +21,7 @@ const file = `
         }
         @media only screen and (max-width: 600px) {
             p, .c3-chart-arcs-title {
-                font-size: 1.7rem;
+                font-size: 1.3rem;
             }
         }
     </style>
