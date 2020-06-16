@@ -5,6 +5,15 @@ const file = `
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4145174-19"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-4145174-19');
+    </script>
     <!-- Load c3.css -->
     <link href="/browser-wars/c3-0.7.15/c3.css" rel="stylesheet">
 
