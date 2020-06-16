@@ -1,12 +1,16 @@
 (function(c3, d3, getData) {
     var h = window.innerHeight;
     var data = getData();
-    var size = h/2;
+    var size = h/5;
     var chart1 = c3.generate({
         bindto: '#chart1',
         responsive: true,
         size: {
-            height: size
+            height: 300
+        },
+        position: {
+            top: 0,
+            right: 0
         },
         donut: {
             title: 'Browser Usage'
@@ -21,7 +25,7 @@
                 ['Edge Legacy', 0],
                 ['Other', 0],
             ],
-            type : 'donut',
+            type : 'pie',
             order: null,
             transition: {
                 duration: 1000
@@ -31,7 +35,7 @@
             }
         },
     });
-
+    d3.select('#chart1').style('position', 'fixed').style('top', 0).style('right', 0);
     var lineChartConfigs = {
         bindto: '#chart2',
         size: {
@@ -76,10 +80,9 @@
         }
     });
     var chart2 = c3.generate(lineChartConfigs);
-    var index = 0;
+    d3.select('#chart2').style('position', 'fixed').style('bottom', 0).style('right', 0);
     chart2.tooltip.show({ x: 1 });
 
-    var interval = setInterval(update, 1000);
     chart1.internal.config.interaction_enabled = false;
     chart1.internal.config.onmouseover = function() {};
     chart1.internal.config.onmouseout = function() {};
@@ -92,13 +95,11 @@
     d3
         .select('#chart2')
         .on('mouseover', function() {
-            clearInterval(interval);
         })
         .on('mouseout', function() {
-            interval = setInterval(update, 1000);
         });
 
-    function update () {
+    function update (index) {
         if (index > data.length - 1) { index = 0; }
 
         var datum = data[index];
@@ -106,7 +107,32 @@
         chart1.load({ columns: datum.data });
         chart2.tooltip.show({ data: { x: new Date(datum.title + '-01')}});
         document.getElementsByClassName('c3-tooltip')[0].style.visibility = 'hidden';
-        index += 3;
-
     }
+
+    function getDocHeight() {
+        var D = document;
+        return Math.max(
+            D.body.scrollHeight, D.documentElement.scrollHeight,
+            D.body.offsetHeight, D.documentElement.offsetHeight,
+            D.body.clientHeight, D.documentElement.clientHeight
+        );
+    }
+
+    var docheight = getDocHeight();
+    function amountscrolled(){
+        var winheight= window.innerHeight || (document.documentElement || document.body).clientHeight;
+        var docheight = getDocHeight();
+        var scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        var trackLength = docheight - winheight;
+         // gets percentage scrolled (ie: 80 or NaN if tracklength == 0)
+        var pctScrolled = Math.floor(scrollTop/trackLength * 100);
+        console.log(pctScrolled + '% scrolled');
+        var size = data.length;
+        var index = Math.floor(size * pctScrolled / 100);
+        update(index);
+    }
+
+    window.addEventListener("scroll", function(){
+        amountscrolled();
+    }, false);
 }(window.c3, window.d3, window.getData));
