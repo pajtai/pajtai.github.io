@@ -1,112 +1,31 @@
 (function(c3, d3, getData) {
     var h = window.innerHeight;
     var data = getData();
-    var size = h/5;
-    var chart1 = c3.generate({
-        bindto: '#chart1',
-        responsive: true,
-        size: {
-            height: 300
-        },
-        position: {
-            top: 0,
-            right: 0
-        },
-        donut: {
-            title: 'Browser Usage'
-        },
-        data: {
-            columns: [
-                ['Chrome', 1.38],
-                ['IE', 65.41],
-                ['Firefox', 27.03],
-                ['Safari', 2.57],
-                ['Opera', 2.92],
-                ['Edge Legacy', 0],
-                ['Other', 0],
-            ],
-            type : 'pie',
-            order: null,
-            transition: {
-                duration: 1000
-            },
-            tooltip: {
-                show: false
-            }
-        },
-    });
-    d3.select('#chart1').style('position', 'fixed').style('top', 0).style('right', 0);
-    var lineChartConfigs = {
-        bindto: '#chart2',
-        size: {
-            height: size
-        },
-        data: {
-            x: 'x',
-            columns: [
-                ['x'],
-                ['Chrome'],
-                ['IE'],
-                ['Firefox'],
-                ['Safari'],
-                ['Opera'],
-                ['Edge Legacy'],
-                ['Other'],
-            ]
-        },
-        axis: {
-            x: {
-                type: 'timeseries',
-                tick: {
-                    format: '%Y-%m-%d'
-                }
-            }
-        },
-        legend: {
-            show: false
-        },
-        point: {
-            show: false
-        },
-        tooltip: {
-            show: true
-        }
-    };
 
-    data.forEach(function(datum) {
-        lineChartConfigs.data.columns[0].push(datum.title + '-1');
-        for (var i=0; i<7; ++i) {
-            lineChartConfigs.data.columns[i + 1].push(datum.data[i][1]);
-        }
-    });
-    var chart2 = c3.generate(lineChartConfigs);
-    d3.select('#chart2').style('position', 'fixed').style('bottom', 0).style('right', 0);
-    chart2.tooltip.show({ x: 1 });
+    var datavars = [224, 84, 29, 3];
+    var colors = ['green','blue','darkgray','#606060'];
 
-    chart1.internal.config.interaction_enabled = false;
-    chart1.internal.config.onmouseover = function() {};
-    chart1.internal.config.onmouseout = function() {};
-    chart1.internal.config.data_onmouseover = function() {};
-    chart1.internal.config.click = function() {};
-    chart1.internal.config.hover = function() {};
-    chart1.internal.expandArc = function() {};
-    chart1.internal.showTooltip = function() {};
+    var svg = d3.select('#chart1')
+        .append('svg')
+        .attr('width', 500)
+        .attr('height', 100);
 
-    d3
-        .select('#chart2')
-        .on('mouseover', function() {
-        })
-        .on('mouseout', function() {
-        });
+    svg.selectAll('rect')
+        .data(datavars)
+        .enter()
+        .append('rect')
+        .attr('width', function(d){
+            return d;})
+        .attr('y',function(d, i){
+            return sum(datavars, 0, i); })
+        .attr('fill', function(d, i){ return colors[i]; })
+        .attr('y',0)
+        .attr('height', 30);
 
-    function update (index) {
-        if (index > data.length - 1) { index = 0; }
-
-        var datum = data[index];
-        d3.select('#chart1 .c3-chart-arcs-title').node().innerHTML = datum.title;
-        chart1.load({ columns: datum.data });
-        chart2.tooltip.show({ data: { x: new Date(datum.title + '-01')}});
-        document.getElementsByClassName('c3-tooltip')[0].style.visibility = 'hidden';
+    function sum(array, start, end) {
+        var total = 0;
+        for(var i=start; i<end; i++) total += array[i];
+        return total;
     }
 
     function getDocHeight() {
@@ -129,10 +48,9 @@
         console.log(pctScrolled + '% scrolled');
         var size = data.length;
         var index = Math.floor(size * pctScrolled / 100);
-        update(index);
     }
 
-    window.addEventListener("scroll", function(){
-        amountscrolled();
-    }, false);
+    window.addEventListener("scroll", amountscrolled, false);
 }(window.c3, window.d3, window.getData));
+
+
