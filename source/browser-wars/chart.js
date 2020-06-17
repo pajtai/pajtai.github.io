@@ -2,8 +2,8 @@
     var h = window.innerHeight;
     var data = getData();
 
-    var datavars = [224, 84, 29, 3];
-    var colors = ['green','blue','darkgray','#606060'];
+    var datavars = [22, 84, 29, 3];
+    var colors = ['red','orange','green','blue'];
 
     var svg = d3.select('#chart1')
         .append('svg')
@@ -16,7 +16,7 @@
         .append('rect')
         .attr('width', function(d){
             return d;})
-        .attr('y',function(d, i){
+        .attr('x',function(d, i){
             return sum(datavars, 0, i); })
         .attr('fill', function(d, i){ return colors[i]; })
         .attr('y',0)
