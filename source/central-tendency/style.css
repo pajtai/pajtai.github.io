@@ -99,7 +99,16 @@ button:focus-visible {
 
 percent-slider {
     background-color: gray;
-    height: 2rem;
+    height: 0.25rem;
     width: 30rem;
     max-width: 90%;
+    position: relative;
+}
+
+.percent-slider_knob {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    position: absolute;
 }

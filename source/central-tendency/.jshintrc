@@ -12,13 +12,13 @@
   "noarg": true,
   "noempty": true,
   "nonew": true,
-  "predef": [
-    "$"
-  ],
   "quotmark": true,
   "trailing": true,
   "undef": true,
   "unused": true,
-
+  "esversion": 6,
+  "globals": {
+    "console": true
+  },
   "expr": true
 }
