@@ -19,6 +19,9 @@
   "trailing": true,
   "undef": true,
   "unused": true,
-
-  "expr": true
+  "globals": {
+    "console": true
+  },
+  "expr": true,
+  "esversion": 6
 }
