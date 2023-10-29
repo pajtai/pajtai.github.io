@@ -1,11 +1,9 @@
-import './style.css';
-
-function eventIsInside(event, rect) {
+function eventIsInside(event, rect, verticalError) {
     const clientX = event.clientX;
     const clientY = event.clientY;
     return (
         (clientX >= rect.left && clientX <= rect.right)  &&
-        (clientY >= rect.top && clientY <= rect.bottom)
+        (clientY >= rect.top - verticalError && clientY <= rect.bottom + verticalError)
     );
 }
 
@@ -18,11 +16,11 @@ class PercentSlider extends HTMLElement {
         super();
 
         this.sliding = false;
-        this.boundingClientRect = this.getBoundingClientRect();
-        this.width = this.boundingClientRect.width;
-        this.leftSide = this.boundingClientRect.x;
+        const boundingClientRect = this.getBoundingClientRect();
+        this.width = boundingClientRect.width;
+        this.leftSide = boundingClientRect.x;
         this.x = this.leftSide + 0.5 * this.width;
-        this.y = this.boundingClientRect.y + 0.5 * this.boundingClientRect.height;
+        this.y = boundingClientRect.y + 0.5 * boundingClientRect.height;
 
         this.knob = document.createElement('div');
         this.knob.classList.add('percent-slider_knob');
@@ -31,16 +29,44 @@ class PercentSlider extends HTMLElement {
         this.knob.style.top = `-${this.knobWidth/2.5}px`;
         this.positionKnob(0.5);
 
-        document.addEventListener('mousedown', (event) => {
-            if (eventIsInside(event, this.boundingClientRect)) {
+        const el = document.getElementById('xdxd');
+
+        document.addEventListener('touchstart', event => {
+            const touch = event.targetTouches[0];
+            event.preventDefault();
+            if (eventIsInside(touch, this.getBoundingClientRect(), 20)) {
                 this.sliding = true;
-                console.log('sliding');
+            }
+        }, false);
+
+        document.addEventListener('touchmove', event => {
+            const touch = event.touches[0];
+            if (this.sliding) {
+                const clientX = touch.clientX;
+                const percent = bound((clientX - this.leftSide)/this.width, 0, 1);
+                this.positionKnob(percent);
+                const sliderEvent = new Event('percent-slider');
+                sliderEvent.percent = percent;
+                this.dispatchEvent(sliderEvent);
+            }
+        });
+
+        document.addEventListener('touchend', event => {
+            this.sliding = false;
+        });
+
+        document.addEventListener('touchcancel', event => {
+            this.sliding = false;
+        });
+
+        document.addEventListener('mousedown', (event) => {
+            if (eventIsInside(event, this.getBoundingClientRect(), 10)) {
+                this.sliding = true;
             }
         });
 
         document.addEventListener('mouseup', () => {
             this.sliding = false;
-            console.log('not sliding');
         });
 
         document.addEventListener('mousemove', event => {
