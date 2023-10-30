@@ -113,3 +113,14 @@ percent-slider {
     background-color: white;
     position: absolute;
 }
+
+.chart-one_contents {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chart-one_contents > pre {
+    background-color: #8c8c8c;
+    margin: 0.2rem;
+
+}
