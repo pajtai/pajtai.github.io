@@ -1,3 +1,5 @@
+import {getCreateElWClass} from '../util.js';
+
 export class ChartOne extends HTMLElement {
     /*
            a
@@ -28,19 +30,14 @@ export class ChartOne extends HTMLElement {
      */
     renderNumbers(numbers) {
         this.renderChart(numbers);
+        this.renderMean(numbers);
         this.renderList(numbers);
     }
 
     renderChart(numbers) {
-        let chart = this.getElementsByClassName('chart');
-        if (chart.length) {
-            chart = chart[0];
-        } else {
-            chart = document.createElement('canvas');
-            chart.classList.add('chart');
-            chart.style.backgroundColor = '#FFF';
-            this.appendChild(chart);
-        }
+        const chart = getCreateElWClass(this, 'chart', 'canvas', el => {
+            el.style.backgroundColor = '#FFF';
+        });
         let bars = [];
         numbers.forEach((number, bin) => {
             bars[bin] = bars[bin] || [];
@@ -67,15 +64,21 @@ export class ChartOne extends HTMLElement {
         ctx.fillRect(barWidth * x + (x - 1) * 2, canvasHeight - scale * height, barWidth, scale * height);
     }
 
+    renderMean(numbers) {
+        const meanDiv = getCreateElWClass(this, 'mean');
+        let kids = 0;
+        const total = numbers.reduce((sum, number, bags) => {
+            sum += number * bags;
+            kids += number;
+            return sum;
+        }, 0);
+
+        const mean = (total/kids).toPrecision(2);
+        meanDiv.innerHTML = `Mean: ${mean}`;
+    }
+
     renderList(numbers) {
-        let numbersList = this.getElementsByClassName('numbers-list');
-        if (numbersList.length) {
-            numbersList = numbersList[0];
-        } else {
-            numbersList = document.createElement('div');
-            numbersList.classList.add('numbers-list');
-            this.appendChild(numbersList);
-        }
+        const numbersList = getCreateElWClass(this, 'numbers-list');
         let numbersListContents = numbersList.firstChild;
         if (numbersList.firstChild) {
             numbersList.removeChild(numbersListContents);
@@ -92,21 +95,22 @@ export class ChartOne extends HTMLElement {
        numbersList.appendChild(numbersListContents);
     }
     createNumbers(percent) {
-        const min = 1;
-        const max = 11;
+        const minBags = 1;
+        const maxBags = 11;
 
         // x = number of bags of candy
         // y = number of kids who got that many bags of candy
         const a = 4;
         const b = 1;
-        const c = (min + max) * percent; // should depend on percent
+        const c = (minBags + maxBags) * percent; // should depend on percent
         const d = 1;
 
         let numbers = [];
-        let bin = min;
-        while (bin <= max) {
-            numbers[bin] = Math.floor(a/(1 + b * Math.pow(bin - c,2)) + d);
-            ++bin;
+        let bags = minBags;
+        while (bags <= maxBags) {
+            // getting # of kids w said bags
+            numbers[bags] = Math.floor(a/(1 + b * Math.pow(bags - c,2)) + d);
+            ++bags;
         }
         return numbers;
     }

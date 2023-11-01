@@ -11,3 +11,15 @@ export function bound(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+export function getCreateElWClass(parent, className, tagName = 'div', cb = null) {
+    let el = parent.getElementsByClassName(className);
+    if (el.length) {
+        el = el[0];
+    } else {
+        el = document.createElement(tagName);
+        el.classList.add(className);
+        cb && cb(el);
+        parent.appendChild(el);
+    }
+    return el;
+}
