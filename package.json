@@ -7,8 +7,7 @@
   },
   "scripts": {
     "deploy": "hexo clean && hexo generate --deploy",
-    "start": "hexo server",
-    "package": "(rm -r source/browser-wars/builds || echo 'already deleted') && mkdir source/browser-wars/builds && hash=\"$(date +%s )\" && uglifyjs --compress --output source/browser-wars/builds/data.${hash}.min.js -- source/browser-wars/data.js &&  uglifyjs --compress --output source/browser-wars/builds/chart.${hash}.min.js -- source/browser-wars/chart.js && node source/browser-wars/build.js $hash"
+    "start": "hexo server"
   },
   "dependencies": {
     "hexo": "^8.1.1",
