@@ -100,8 +100,10 @@ theme_config:
     Tags: /tags/
     About: /about/
   social_links:
-    github: https://github.com/pajtai
-    linkedin: https://www.linkedin.com/in/peter-ajtai-97573112/
+    - icon: github
+      link: https://github.com/pajtai
+    - icon: linkedin
+      link: https://www.linkedin.com/in/peter-ajtai-97573112/
   google_analytics:
     enabled: true
     id: 'G-45SRMFXRQ9'

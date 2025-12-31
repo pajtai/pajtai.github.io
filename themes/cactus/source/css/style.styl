@@ -10,6 +10,29 @@ global-reset()
 *, *:before, *:after
   box-sizing: border-box
 
+/* Scroll bar */
+/* For Firefox */
+*
+  scrollbar-color: $color-scrollbar transparent
+
+/* For Chrome, Edge, and Safari */
+*::-webkit-scrollbar
+  width: 8px
+  height: 6px
+
+*::-webkit-scrollbar-track
+  background: transparent
+
+*::-webkit-scrollbar-thumb
+  background-color: $color-scrollbar
+  border-radius: 6px
+
+*::-webkit-scrollbar-thumb:hover
+  background-color: darken($color-scrollbar, 20%)
+
+*::-webkit-scrollbar-thumb:active
+  background-color: darken($color-scrollbar, 30%)
+
 html
   margin: 0
   padding: 0
@@ -19,16 +42,15 @@ html
   -ms-text-size-adjust: 100%
 
 body
+  margin: 0
   height: 100%
   background-color: $color-background
   color: $color-text
-  font-display: swap // @stylint ignore
   font-weight: 400
   font-size: $font-size
   font-family: $font-family-body
   line-height: $line-height
   text-rendering: geometricPrecision
-  flex: 1
 
   antialias()
 
@@ -39,6 +61,7 @@ body
   display: flex
   flex-direction: column
   min-height: 100%
+  overflow-wrap: break-word
 
   p
     hyphens(auto)
@@ -119,6 +142,7 @@ body
 @import "_partial/pagination"
 @import "_partial/search"
 @import "_partial/tags"
+@import "_partial/tooltip"
 @import "_partial/categories"
 // Code
 @import "_highlight/" + $highlight
@@ -159,7 +183,7 @@ code
     margin: -5px 0 5px
     color: $color-meta-code
     font-size: .9em
-    zoom: 1
+    transform: scale(1)
 
     a
       float: right
@@ -178,7 +202,21 @@ code
     &:after
       clear: both
 
+  &:hover 
+    .btn-copy
+      opacity: 1
+
+  .btn-copy
+    font-size: 1.2rem
+    position: absolute
+    right: 20px
+    opacity: 0
+    transition: opacity 0.2s ease-in
+    &:hover
+      color: $color-accent-1
+
   pre
+    margin: 0
     padding: 0
     border: none
     background: none
@@ -188,6 +226,10 @@ code
 
   td.gutter
     text-align: right
+    opacity: .2
 
   .line
     height: 22px
+
+#header-post #actions
+  direction: ltr !important
