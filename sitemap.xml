@@ -155,6 +155,13 @@
 
   
   <url>
+    <loc>https://pajtai.github.io/tags/debugging/</loc>
+    <lastmod>2025-12-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://pajtai.github.io/tags/automation/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -183,13 +190,6 @@
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/debugging/</loc>
-    <lastmod>2025-12-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://pajtai.github.io/tags/javascript/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -198,6 +198,20 @@
   
   <url>
     <loc>https://pajtai.github.io/tags/caching/</loc>
+    <lastmod>2025-12-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://pajtai.github.io/tags/work/</loc>
+    <lastmod>2025-12-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://pajtai.github.io/tags/effort/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -232,13 +246,6 @@
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/quizzes/</loc>
-    <lastmod>2025-12-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://pajtai.github.io/tags/life/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -246,14 +253,7 @@
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/work/</loc>
-    <lastmod>2025-12-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://pajtai.github.io/tags/effort/</loc>
+    <loc>https://pajtai.github.io/tags/quizzes/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
