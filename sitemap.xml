@@ -271,14 +271,14 @@
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/rest/</loc>
+    <loc>https://pajtai.github.io/tags/life/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/life/</loc>
+    <loc>https://pajtai.github.io/tags/rest/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -313,13 +313,6 @@
   </url>
   
   <url>
-    <loc>https://pajtai.github.io/tags/development/</loc>
-    <lastmod>2025-12-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://pajtai.github.io/tags/economics/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -342,6 +335,13 @@
   
   <url>
     <loc>https://pajtai.github.io/tags/toxic-assets/</loc>
+    <lastmod>2025-12-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://pajtai.github.io/tags/development/</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
