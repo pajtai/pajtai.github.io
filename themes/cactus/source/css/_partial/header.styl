@@ -51,6 +51,7 @@
 
       a:hover
         underline(5px, $color-accent-1)
+        font-weight: bold
 
       li
         display: inline-block
@@ -68,6 +69,11 @@
 
         a
           margin-right: 0
+
+#header:hover
+  #logo
+    filter: saturate(160%)
+    -webkit-filter: saturate(160%)
 
 if $logo-grayout
   #header:hover
@@ -103,8 +109,8 @@ if $logo-grayout
     ul.responsive
       li
         display: block
-    
-    ul 
+
+    ul
       a[aria-label="Menu"]
         display: inline-block
         min-width: 48px
