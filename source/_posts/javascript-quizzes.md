@@ -44,7 +44,7 @@ tags:
     for (i = 0; i < quizzesLength; ++i) {
         ellie = document.createElement('li');
         a  = document.createElement('a');
-        a.href = "http://jsfiddle.net/pajtai/" + quizzes[i].url + "/show/";
+        a.href = "http://jsfiddle.net/pajtai/" + quizzes[i].url;
         quizEl.appendChild(ellie);
         ellie.appendChild(a);
         a.appendChild(document.createTextNode("Quiz " + (i + 1)));
