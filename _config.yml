@@ -85,7 +85,7 @@ theme: cactus
 deploy:
 - type: git
   repo: git@github.com:pajtai/pajtai.github.io.git
-  branch: master
+  branch: main
 
 marked:
   gfm: true
