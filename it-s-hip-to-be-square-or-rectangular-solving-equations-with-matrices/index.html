@@ -7,17 +7,18 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="Arranging numbers in rectangles to do math turns out to often be more efficient than iteration. Sometimes you have to solve a bunch of equations. Let’s take a simple example. Let’s say  you’re convert">
-<meta name="keywords" content="linear algebra,equations">
 <meta property="og:type" content="article">
 <meta property="og:title" content="It&#39;s hip to be square (or rectangular) - solving equations with matrices">
 <meta property="og:url" content="https://pajtai.github.io/it-s-hip-to-be-square-or-rectangular-solving-equations-with-matrices/index.html">
 <meta property="og:site_name" content="Peter Ajtai">
 <meta property="og:description" content="Arranging numbers in rectangles to do math turns out to often be more efficient than iteration. Sometimes you have to solve a bunch of equations. Let’s take a simple example. Let’s say  you’re convert">
-<meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-01-06T06:39:25.000Z">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-01-06T06:39:25.000Z">
+<meta property="article:modified_time" content="2019-01-06T06:39:25.000Z">
+<meta property="article:author" content="Peter Ajtai">
+<meta property="article:tag" content="equations">
+<meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="It&#39;s hip to be square (or rectangular) - solving equations with matrices">
-<meta name="twitter:description" content="Arranging numbers in rectangles to do math turns out to often be more efficient than iteration. Sometimes you have to solve a bunch of equations. Let’s take a simple example. Let’s say  you’re convert">
     
     
         
@@ -39,15 +40,19 @@
     <!-- title -->
     <title>It&#39;s hip to be square (or rectangular) - solving equations with matrices</title>
     <!-- styles -->
-    <link rel="stylesheet" href="/css/style.css">
+    
+<link rel="stylesheet" href="/css/style.css">
+
     <!-- persian styles -->
     
-      <link rel="stylesheet" href="/css/rtl.css">
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
     
     <!-- rss -->
     
     
-</head>
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 <body class="max-width mx-auto px3 ltr">
     
@@ -103,7 +108,19 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#begin-bmatrix-A-B-C-D-end-bmatrix-begin-bmatrix-E-F-end-bmatrix"><span class="toc-number">1.</span> <span class="toc-text">$$
+\begin{bmatrix}
+A &amp; B \C &amp; D
+\end{bmatrix} * 
+\begin{bmatrix}
+E \\ F
+\end{bmatrix}</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#begin-bmatrix-4-3-10-4-end-bmatrix-begin-bmatrix-x-y-end-bmatrix"><span class="toc-number">2.</span> <span class="toc-text">$$
+\begin{bmatrix}
+4 &amp; 3 \10 &amp; -4
+\end{bmatrix}
+\begin{bmatrix}
+x \\ y
+\end{bmatrix}</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -135,7 +152,7 @@
       
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/equations/">equations</a>, <a class="tag-link" href="/tags/linear-algebra/">linear algebra</a>
+        <a class="tag-link-link" href="/tags/equations/" rel="tag">equations</a>, <a class="tag-link-link" href="/tags/linear-algebra/" rel="tag">linear algebra</a>
     </div>
 
 
@@ -150,71 +167,72 @@ you’re converting a bunch of temperatures from Celsius to Fahrenheit. </p>
 <p>You’ve got your list of $^oC$ temperatures: <code>140</code>, <code>145</code>, <code>160</code>, <code>163</code>, <code>170</code>, <code>175</code>…</p>
 <p>And you know that:</p>
 <p>$$
-^oF =\space ^oC \frac{9}{5} + 32 
+^oF &#x3D;\space ^oC \frac{9}{5} + 32 
 $$</p>
 <p>If you’ve got more than 5 temperatures, using the calculator gets annoying. If you’re familiar with spreadsheets, this is
 when you’d create a formula in one of them. Linear algebra can be used very much like a spread sheet.</p>
 <p>We can matrix multiplication to do our work quickly and efficiently.</p>
 <p>When you multiply a matrix by a vector, you multiply each row in the matrix by each item in the vector and sum across the row.</p>
 <p>For example:</p>
-<p>$$
+<h1 id="begin-bmatrix-A-B-C-D-end-bmatrix-begin-bmatrix-E-F-end-bmatrix"><a href="#begin-bmatrix-A-B-C-D-end-bmatrix-begin-bmatrix-E-F-end-bmatrix" class="headerlink" title="$$
 \begin{bmatrix}
-A &amp; B \\
-C &amp; D
+A &amp; B \C &amp; D
 \end{bmatrix} * 
 \begin{bmatrix}
 E \\ F
-\end{bmatrix}
-= 
+\end{bmatrix}"></a>$$
 \begin{bmatrix}
-A E + B F \\
-C E + D F
+A &amp; B \<br>C &amp; D
+\end{bmatrix} * 
+\begin{bmatrix}
+E \\ F
+\end{bmatrix}</h1><p>\begin{bmatrix}
+A E + B F \<br>C E + D F
 \end{bmatrix}
 $$</p>
 <p>So, to set this up with tempratures we have:</p>
 <p>$$
 \begin{bmatrix}
-140 &amp; 1 \\
-145 &amp; 1 \\
-160 &amp; 1 \\
-163 &amp; 1 \\
-170 &amp; 1 \\
-175 &amp; 1 \\
-\end{bmatrix} *
+140 &amp; 1 \<br>145 &amp; 1 \<br>160 &amp; 1 \<br>163 &amp; 1 \<br>170 &amp; 1 \<br>175 &amp; 1 \<br>\end{bmatrix} *
 \begin{bmatrix}
 \frac{9}{5} \\ 32
 \end{bmatrix}
 $$</p>
-<p>If you’re using <a href="https://www.gnu.org/software/octave/" target="_blank" rel="noopener">Octave</a> and import the temperatures in - or as in the example 
+<p>If you’re using <a href="https://www.gnu.org/software/octave/">Octave</a> and import the temperatures in - or as in the example 
 type them out - this is pretty easy to setup.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">% vector of temparutures</span><br><span class="line">T = [140; 145; 160; 163; 170; 175]</span><br><span class="line"> </span><br><span class="line">% add the ones</span><br><span class="line">T = [T ones(length(T), 1)]</span><br><span class="line"> </span><br><span class="line">c = [9/5; 32]</span><br><span class="line"></span><br><span class="line">% do the math</span><br><span class="line">F = T*c</span><br><span class="line"></span><br><span class="line">F =</span><br><span class="line"></span><br><span class="line">   284.00</span><br><span class="line">   293.00</span><br><span class="line">   320.00</span><br><span class="line">   325.40</span><br><span class="line">   338.00</span><br><span class="line">   347.00</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">% vector of temparutures</span><br><span class="line">T = [140; 145; 160; 163; 170; 175]</span><br><span class="line"> </span><br><span class="line">% add the ones</span><br><span class="line">T = [T ones(length(T), 1)]</span><br><span class="line"> </span><br><span class="line">c = [9/5; 32]</span><br><span class="line"></span><br><span class="line">% do the math</span><br><span class="line">F = T*c</span><br><span class="line"></span><br><span class="line">F =</span><br><span class="line"></span><br><span class="line">   284.00</span><br><span class="line">   293.00</span><br><span class="line">   320.00</span><br><span class="line">   325.40</span><br><span class="line">   338.00</span><br><span class="line">   347.00</span><br></pre></td></tr></table></figure>
+
 <p>If you’re a programmer, you’re probably saying to yourself that you can just do this with iteration and a <code>CtoF</code> function.
 The interesting thing is that matrix operations like this are generally more efficient than iteration.</p>
 <p>You can also use a similar concept to solve multiple unknowns in multiple equations.</p>
 <p>For example if we have <code>4x+3y=17</code> and <code>10x - 4x = 8</code> we can represent those two equations like we did above.</p>
-<p>$$
+<h1 id="begin-bmatrix-4-3-10-4-end-bmatrix-begin-bmatrix-x-y-end-bmatrix"><a href="#begin-bmatrix-4-3-10-4-end-bmatrix-begin-bmatrix-x-y-end-bmatrix" class="headerlink" title="$$
 \begin{bmatrix}
-4 &amp; 3 \\
-10 &amp; -4
+4 &amp; 3 \10 &amp; -4
 \end{bmatrix}
 \begin{bmatrix}
 x \\ y
-\end{bmatrix}
-=
+\end{bmatrix}"></a>$$
 \begin{bmatrix}
+4 &amp; 3 \<br>10 &amp; -4
+\end{bmatrix}
+\begin{bmatrix}
+x \\ y
+\end{bmatrix}</h1><p>\begin{bmatrix}
 17 \\ 8
 \end{bmatrix}
 $$</p>
 <p>So, we’ve setup <code>AX = B</code>, to solve for <code>X</code> we multiply both sides by the inverse of <code>A</code>:</p>
 <p>$$
-A^{-1}AX=A^{-1}B 
+A^{-1}AX&#x3D;A^{-1}B 
 $$</p>
-<p>And $A^{-1}A$ is $I$, the identity matrix, so $IX=X$</p>
+<p>And $A^{-1}A$ is $I$, the identity matrix, so $IX&#x3D;X$</p>
 <p>$$
-X=A^{-1}B
+X&#x3D;A^{-1}B
 $$ </p>
 <p>So, in Octave we have:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pinv([4 3;10 -4])*[17; 8]</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   2.0000</span><br><span class="line">   3.0000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pinv([4 3;10 -4])*[17; 8]</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   2.0000</span><br><span class="line">   3.0000</span><br></pre></td></tr></table></figure>
+
 <p>So x is 2 and y is 3. This equation set is simple enough that you can visually verify. The neat thing is that this works
 for much larger numbers of unkowns too…. and those are a real pain to do by hand!</p>
 
@@ -242,7 +260,19 @@ for much larger numbers of unkowns too…. and those are a real pain to do by ha
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#begin-bmatrix-A-B-C-D-end-bmatrix-begin-bmatrix-E-F-end-bmatrix"><span class="toc-number">1.</span> <span class="toc-text">$$
+\begin{bmatrix}
+A &amp; B \C &amp; D
+\end{bmatrix} * 
+\begin{bmatrix}
+E \\ F
+\end{bmatrix}</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#begin-bmatrix-4-3-10-4-end-bmatrix-begin-bmatrix-x-y-end-bmatrix"><span class="toc-number">2.</span> <span class="toc-text">$$
+\begin{bmatrix}
+4 &amp; 3 \10 &amp; -4
+\end{bmatrix}
+\begin{bmatrix}
+x \\ y
+\end{bmatrix}</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
@@ -274,7 +304,7 @@ for much larger numbers of unkowns too…. and those are a real pain to do by ha
         
         <footer id="footer">
   <div class="footer-left">
-    Copyright &copy; 2020 Peter Ajtai
+    Copyright &copy; 2025 Peter Ajtai
   </div>
   <div class="footer-right">
     <nav>
@@ -294,32 +324,26 @@ for much larger numbers of unkowns too…. and those are a real pain to do by ha
 </footer>
 
     </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-
-<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML></script>
 </body>
 </html>
 <!-- styles -->
+
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
 <link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
+
 <!-- jquery -->
+
 <script src="/lib/jquery/jquery.min.js"></script>
+
+
 <script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
 <script src="/js/main.js"></script>
+
 <!-- search -->
 
 <!-- Google Analytics -->

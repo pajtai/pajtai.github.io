@@ -33,7 +33,7 @@ const file = `
     <div id="chart2"></div>
     <script src="/browser-wars/builds/data.${hash}.min.js"></script>
     <script src="/browser-wars/builds/chart.${hash}.min.js"></script>
-    <a href="https://gs.statcounter.com/browser-market-share/desktop/worldwide/#monthly-200901-201807" target="_blank" rel="noopener">Data Source</a>
+    <a href="https://gs.statcounter.com/browser-market-share/desktop/worldwide/#monthly-200901-201807">Data Source</a>
 </body>
 </html>
 `;

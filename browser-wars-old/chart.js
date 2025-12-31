@@ -71,7 +71,35 @@
 
     data.forEach(function(datum) {
         lineChartConfigs.data.columns[0].push(datum.title + '-1');
-        for (var i=0; i<7; 1="" ++i)="" {="" linechartconfigs.data.columns[i="" +="" 1].push(datum.data[i][1]);="" }="" });="" var="" chart2="c3.generate(lineChartConfigs);" index="0;" chart2.tooltip.show({="" x:="" interval="setInterval(update," 1000);="" chart1.internal.config.interaction_enabled="false;" chart1.internal.config.onmouseover="function()" {};="" chart1.internal.config.onmouseout="function()" chart1.internal.config.data_onmouseover="function()" chart1.internal.config.click="function()" chart1.internal.config.hover="function()" chart1.internal.expandarc="function()" chart1.internal.showtooltip="function()" d3="" .select('#chart2')="" .on('mouseover',="" function()="" clearinterval(interval);="" })="" .on('mouseout',="" function="" update="" ()="" if="" (index=""> data.length - 1) { index = 0; }
+        for (var i=0; i<7; ++i) {
+            lineChartConfigs.data.columns[i + 1].push(datum.data[i][1]);
+        }
+    });
+    var chart2 = c3.generate(lineChartConfigs);
+    var index = 0;
+    chart2.tooltip.show({ x: 1 });
+
+    var interval = setInterval(update, 1000);
+    chart1.internal.config.interaction_enabled = false;
+    chart1.internal.config.onmouseover = function() {};
+    chart1.internal.config.onmouseout = function() {};
+    chart1.internal.config.data_onmouseover = function() {};
+    chart1.internal.config.click = function() {};
+    chart1.internal.config.hover = function() {};
+    chart1.internal.expandArc = function() {};
+    chart1.internal.showTooltip = function() {};
+
+    d3
+        .select('#chart2')
+        .on('mouseover', function() {
+            clearInterval(interval);
+        })
+        .on('mouseout', function() {
+            interval = setInterval(update, 1000);
+        });
+
+    function update () {
+        if (index > data.length - 1) { index = 0; }
 
         var datum = data[index];
         d3.select('#chart1 .c3-chart-arcs-title').node().innerHTML = datum.title;
@@ -82,4 +110,3 @@
 
     }
 }(window.c3, window.d3, window.getData));
-</7;>

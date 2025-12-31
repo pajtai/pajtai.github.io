@@ -176,7 +176,7 @@
     return !isEmpty(o);
   };
   var sanitise = function sanitise(str) {
-    return typeof str === 'string' ? str.replace(//g, '&gt;') : str;
+    return typeof str === 'string' ? str.replace(/</g, '&lt;').replace(/>/g, '&gt;') : str;
   };
   var flattenArray = function flattenArray(arr) {
     var _ref;
@@ -393,12 +393,68 @@
       return tickText;
     }
 
-    if (!maxWidth || maxWidth <= 1="" 12="" 95="" 0)="" {="" maxwidth="internal.isVertical()" ?="" :="" internal.params.iscategory="" math.ceil(scale(1)="" -="" scale(0))="" 110;="" }="" function="" split(splitted,="" text)="" spaceindex="undefined;" for="" (var="" i="1;" <="" text.length;="" i++)="" if="" (text.charat(i)="==" '="" ')="" subtext="text.substr(0," +="" 1);="" textwidth="internal.tickTextCharSize.w" *="" subtext.length;="" text="" width="" gets="" over="" tick="" width,="" split="" by="" space="" index="" or="" crrent="" (maxwidth="" textwidth)="" return="" split(splitted.concat(text.substr(0,="" i)),="" text.slice(spaceindex="" i));="" splitted.concat(text);="" ticktext="" "");="" };="" axisinternal.prototype.ellipsify="function" (splitted,="" max)="" (splitted.length="" splitted;="" var="" ellipsified="splitted.slice(0," max);="" remaining="3;" 1;="">= 0; i--) {
+    if (!maxWidth || maxWidth <= 0) {
+      maxWidth = internal.isVertical() ? 95 : internal.params.isCategory ? Math.ceil(scale(1) - scale(0)) - 12 : 110;
+    }
+
+    function split(splitted, text) {
+      spaceIndex = undefined;
+
+      for (var i = 1; i < text.length; i++) {
+        if (text.charAt(i) === ' ') {
+          spaceIndex = i;
+        }
+
+        subtext = text.substr(0, i + 1);
+        textWidth = internal.tickTextCharSize.w * subtext.length; // if text width gets over tick width, split by space index or crrent index
+
+        if (maxWidth < textWidth) {
+          return split(splitted.concat(text.substr(0, spaceIndex ? spaceIndex : i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+        }
+      }
+
+      return splitted.concat(text);
+    }
+
+    return split(splitted, tickText + "");
+  };
+
+  AxisInternal.prototype.ellipsify = function (splitted, max) {
+    if (splitted.length <= max) {
+      return splitted;
+    }
+
+    var ellipsified = splitted.slice(0, max);
+    var remaining = 3;
+
+    for (var i = max - 1; i >= 0; i--) {
       var available = ellipsified[i].length;
       ellipsified[i] = ellipsified[i].substr(0, available - remaining).padEnd(available, '.');
       remaining -= available;
 
-      if (remaining <= 0="" 0)="" {="" break;="" }="" return="" ellipsified;="" };="" axisinternal.prototype.updateticklength="function" ()="" var="" internal="this;" internal.ticklength="Math.max(internal.innerTickSize," +="" internal.tickpadding;="" axisinternal.prototype.liney2="function" (d)="" tickposition="internal.scale(d)" (internal.tickcentered="" ?="" :="" internal.tickoffset);="" internal.range[0]="" <="" &&="" internal.range[1]="" internal.innerticksize="" 0;="" axisinternal.prototype.texty="function" rotate="internal.tickTextRotate;" 11.5="" -="" 2.5="" *="" (rotate="" 15)=""> 0 ? 1 : -1) : internal.tickLength;
+      if (remaining <= 0) {
+        break;
+      }
+    }
+
+    return ellipsified;
+  };
+
+  AxisInternal.prototype.updateTickLength = function () {
+    var internal = this;
+    internal.tickLength = Math.max(internal.innerTickSize, 0) + internal.tickPadding;
+  };
+
+  AxisInternal.prototype.lineY2 = function (d) {
+    var internal = this,
+        tickPosition = internal.scale(d) + (internal.tickCentered ? 0 : internal.tickOffset);
+    return internal.range[0] < tickPosition && tickPosition < internal.range[1] ? internal.innerTickSize : 0;
+  };
+
+  AxisInternal.prototype.textY = function () {
+    var internal = this,
+        rotate = internal.tickTextRotate;
+    return rotate ? 11.5 - 2.5 * (rotate / 15) * (rotate > 0 ? 1 : -1) : internal.tickLength;
   };
 
   AxisInternal.prototype.textTransform = function () {
@@ -1123,7 +1179,59 @@
       });
     }
 
-    $$.currentMaxTickWidths[id] = maxWidth <= 0="" ?="" $$.currentmaxtickwidths[id]="" :="" maxwidth;="" return="" $$.currentmaxtickwidths[id];="" };="" axis.prototype.updatelabels="function" updatelabels(withtransition)="" {="" var="" $$="this.owner;" axisxlabel="$$.main.select('.'" +="" class.axisx="" '="" .'="" class.axisxlabel),="" axisylabel="$$.main.select('.'" class.axisy="" class.axisylabel),="" axisy2label="$$.main.select('.'" class.axisy2="" class.axisy2label);="" (withtransition="" axisxlabel.transition()="" axisxlabel).attr("x",="" this.xforxaxislabel.bind(this)).attr("dx",="" this.dxforxaxislabel.bind(this)).attr("dy",="" this.dyforxaxislabel.bind(this)).text(this.textforxaxislabel.bind(this));="" axisylabel.transition()="" axisylabel).attr("x",="" this.xforyaxislabel.bind(this)).attr("dx",="" this.dxforyaxislabel.bind(this)).attr("dy",="" this.dyforyaxislabel.bind(this)).text(this.textforyaxislabel.bind(this));="" axisy2label.transition()="" axisy2label).attr("x",="" this.xfory2axislabel.bind(this)).attr("dx",="" this.dxfory2axislabel.bind(this)).attr("dy",="" this.dyfory2axislabel.bind(this)).text(this.textfory2axislabel.bind(this));="" axis.prototype.getpadding="function" getpadding(padding,="" key,="" defaultvalue,="" domainlength)="" p="typeof" padding="==" 'number'="" padding[key];="" if="" (!isvalue(p))="" defaultvalue;="" }="" (padding.unit="==" 'ratio')="" padding[key]="" *="" domainlength;="" assume="" is="" pixels="" unit="" not="" specified="" this.convertpixelstoaxispadding(p,="" domainlength);="" axis.prototype.convertpixelstoaxispadding="function" convertpixelstoaxispadding(pixels,="" length="$$.config.axis_rotated" $$.width="" $$.height;="" domainlength="" (pixels="" length);="" axis.prototype.generatetickvalues="function" generatetickvalues(values,="" tickcount,="" fortimeseries)="" tickvalues="values," targetcount,="" start,="" end,="" count,="" interval,="" i,="" tickvalue;="" (tickcount)="" targetcount="isFunction(tickCount)" tickcount()="" tickcount;="" compute="" ticks="" according="" to="" tickcount="" (targetcount="==" 1)="" else="" 2)="" values[values.length="" -="" 1]];=""> 2) {
+    $$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth;
+    return $$.currentMaxTickWidths[id];
+  };
+
+  Axis.prototype.updateLabels = function updateLabels(withTransition) {
+    var $$ = this.owner;
+    var axisXLabel = $$.main.select('.' + CLASS.axisX + ' .' + CLASS.axisXLabel),
+        axisYLabel = $$.main.select('.' + CLASS.axisY + ' .' + CLASS.axisYLabel),
+        axisY2Label = $$.main.select('.' + CLASS.axisY2 + ' .' + CLASS.axisY2Label);
+    (withTransition ? axisXLabel.transition() : axisXLabel).attr("x", this.xForXAxisLabel.bind(this)).attr("dx", this.dxForXAxisLabel.bind(this)).attr("dy", this.dyForXAxisLabel.bind(this)).text(this.textForXAxisLabel.bind(this));
+    (withTransition ? axisYLabel.transition() : axisYLabel).attr("x", this.xForYAxisLabel.bind(this)).attr("dx", this.dxForYAxisLabel.bind(this)).attr("dy", this.dyForYAxisLabel.bind(this)).text(this.textForYAxisLabel.bind(this));
+    (withTransition ? axisY2Label.transition() : axisY2Label).attr("x", this.xForY2AxisLabel.bind(this)).attr("dx", this.dxForY2AxisLabel.bind(this)).attr("dy", this.dyForY2AxisLabel.bind(this)).text(this.textForY2AxisLabel.bind(this));
+  };
+
+  Axis.prototype.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
+    var p = typeof padding === 'number' ? padding : padding[key];
+
+    if (!isValue(p)) {
+      return defaultValue;
+    }
+
+    if (padding.unit === 'ratio') {
+      return padding[key] * domainLength;
+    } // assume padding is pixels if unit is not specified
+
+
+    return this.convertPixelsToAxisPadding(p, domainLength);
+  };
+
+  Axis.prototype.convertPixelsToAxisPadding = function convertPixelsToAxisPadding(pixels, domainLength) {
+    var $$ = this.owner,
+        length = $$.config.axis_rotated ? $$.width : $$.height;
+    return domainLength * (pixels / length);
+  };
+
+  Axis.prototype.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
+    var tickValues = values,
+        targetCount,
+        start,
+        end,
+        count,
+        interval,
+        i,
+        tickValue;
+
+    if (tickCount) {
+      targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
+
+      if (targetCount === 1) {
+        tickValues = [values[0]];
+      } else if (targetCount === 2) {
+        tickValues = [values[0], values[values.length - 1]];
+      } else if (targetCount > 2) {
         count = targetCount - 2;
         start = values[0];
         end = values[values.length - 1];
@@ -3553,7 +3661,11 @@
           measurementElement.setAttribute("d", this.getAttribute("d"));
           var lastPathSegment = measurementElement.pathSegList.numberOfItems - 1; // If the path is empty, return 0.
 
-          if (lastPathSegment <= 0)="" return="" 0;="" do="" {="" measurementelement.pathseglist.removeitem(lastpathsegment);="" if="" (distance=""> measurementElement.getTotalLength()) break;
+          if (lastPathSegment <= 0) return 0;
+
+          do {
+            measurementElement.pathSegList.removeItem(lastPathSegment);
+            if (distance > measurementElement.getTotalLength()) break;
             lastPathSegment--;
           } while (lastPathSegment > 0);
 
@@ -3786,12 +3898,157 @@
 
         Source.prototype._isCurrentSpace = function () {
           var character = this._string[this._currentIndex];
-          return character <= "="" &&="" (character="=" ||="" character="=" "\n"="" "\t"="" "\r"="" "\f");="" };="" source.prototype._skipoptionalspaces="function" ()="" {="" while="" (this._currentindex="" <="" this._endindex="" this._iscurrentspace())="" this._currentindex++;="" }="" return="" this._currentindex="" this._endindex;="" source.prototype._skipoptionalspacesordelimiter="function" if="" !this._iscurrentspace()="" this._string.charat(this._currentindex)="" !="," )="" false;="" (this._skipoptionalspaces())="" ",")="" this._skipoptionalspaces();="" source.prototype.hasmoredata="function" source.prototype.peeksegmenttype="function" var="" lookahead="this._string[this._currentIndex];" this._pathsegtypefromchar(lookahead);="" source.prototype._pathsegtypefromchar="function" (lookahead)="" switch="" case="" "z":="" window.svgpathseg.pathseg_closepath;="" "m":="" window.svgpathseg.pathseg_moveto_abs;="" window.svgpathseg.pathseg_moveto_rel;="" "l":="" window.svgpathseg.pathseg_lineto_abs;="" window.svgpathseg.pathseg_lineto_rel;="" "c":="" window.svgpathseg.pathseg_curveto_cubic_abs;="" window.svgpathseg.pathseg_curveto_cubic_rel;="" "q":="" window.svgpathseg.pathseg_curveto_quadratic_abs;="" window.svgpathseg.pathseg_curveto_quadratic_rel;="" "a":="" window.svgpathseg.pathseg_arc_abs;="" window.svgpathseg.pathseg_arc_rel;="" "h":="" window.svgpathseg.pathseg_lineto_horizontal_abs;="" window.svgpathseg.pathseg_lineto_horizontal_rel;="" "v":="" window.svgpathseg.pathseg_lineto_vertical_abs;="" window.svgpathseg.pathseg_lineto_vertical_rel;="" "s":="" window.svgpathseg.pathseg_curveto_cubic_smooth_abs;="" window.svgpathseg.pathseg_curveto_cubic_smooth_rel;="" "t":="" window.svgpathseg.pathseg_curveto_quadratic_smooth_abs;="" window.svgpathseg.pathseg_curveto_quadratic_smooth_rel;="" default:="" window.svgpathseg.pathseg_unknown;="" source.prototype._nextcommandhelper="function" (lookahead,="" previouscommand)="" check="" for="" remaining="" coordinates="" in="" the="" current="" command.="" ((lookahead="=" "+"="" "-"="" "."="">= "0" && lookahead <= "9")="" &&="" previouscommand="" !="window.SVGPathSeg.PATHSEG_CLOSEPATH)" {="" if="" (previouscommand="=" window.svgpathseg.pathseg_moveto_abs)="" return="" window.svgpathseg.pathseg_lineto_abs;="" window.svgpathseg.pathseg_moveto_rel)="" window.svgpathseg.pathseg_lineto_rel;="" previouscommand;="" }="" window.svgpathseg.pathseg_unknown;="" };="" source.prototype.initialcommandismoveto="function" ()="" the="" path="" is="" empty="" it="" still="" valid,="" so="" true.="" (!this.hasmoredata())="" true;="" var="" command="this.peekSegmentType();" must="" start="" with="" moveto.="" window.svgpathseg.pathseg_moveto_abs="" ||="" window.svgpathseg.pathseg_moveto_rel;="" parse="" a="" number="" from="" an="" svg="" path.="" this="" very="" closely="" follows="" genericparsenumber(...)="" source="" core="" svgparserutilities.cpp.="" spec:="" http:="" www.w3.org="" tr="" svg11="" single-page.html#paths-pathdatabnf="" source.prototype._parsenumber="function" exponent="0;" integer="0;" frac="1;" decimal="0;" sign="1;" expsign="1;" startindex="this._currentIndex;" this._skipoptionalspaces();="" read="" sign.="" (this._currentindex="" <="" this._endindex="" this._string.charat(this._currentindex)="=" "+")="" this._currentindex++;else="" "-")="" this._currentindex++;="" (this._string.charat(this._currentindex)="" "0"=""> "9") && this._string.charAt(this._currentIndex) != ".") // The first character of a number must be one of [0-9+-.].
+          return character <= " " && (character == " " || character == "\n" || character == "\t" || character == "\r" || character == "\f");
+        };
+
+        Source.prototype._skipOptionalSpaces = function () {
+          while (this._currentIndex < this._endIndex && this._isCurrentSpace()) {
+            this._currentIndex++;
+          }
+
+          return this._currentIndex < this._endIndex;
+        };
+
+        Source.prototype._skipOptionalSpacesOrDelimiter = function () {
+          if (this._currentIndex < this._endIndex && !this._isCurrentSpace() && this._string.charAt(this._currentIndex) != ",") return false;
+
+          if (this._skipOptionalSpaces()) {
+            if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == ",") {
+              this._currentIndex++;
+
+              this._skipOptionalSpaces();
+            }
+          }
+
+          return this._currentIndex < this._endIndex;
+        };
+
+        Source.prototype.hasMoreData = function () {
+          return this._currentIndex < this._endIndex;
+        };
+
+        Source.prototype.peekSegmentType = function () {
+          var lookahead = this._string[this._currentIndex];
+          return this._pathSegTypeFromChar(lookahead);
+        };
+
+        Source.prototype._pathSegTypeFromChar = function (lookahead) {
+          switch (lookahead) {
+            case "Z":
+            case "z":
+              return window.SVGPathSeg.PATHSEG_CLOSEPATH;
+
+            case "M":
+              return window.SVGPathSeg.PATHSEG_MOVETO_ABS;
+
+            case "m":
+              return window.SVGPathSeg.PATHSEG_MOVETO_REL;
+
+            case "L":
+              return window.SVGPathSeg.PATHSEG_LINETO_ABS;
+
+            case "l":
+              return window.SVGPathSeg.PATHSEG_LINETO_REL;
+
+            case "C":
+              return window.SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS;
+
+            case "c":
+              return window.SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL;
+
+            case "Q":
+              return window.SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS;
+
+            case "q":
+              return window.SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL;
+
+            case "A":
+              return window.SVGPathSeg.PATHSEG_ARC_ABS;
+
+            case "a":
+              return window.SVGPathSeg.PATHSEG_ARC_REL;
+
+            case "H":
+              return window.SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS;
+
+            case "h":
+              return window.SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL;
+
+            case "V":
+              return window.SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS;
+
+            case "v":
+              return window.SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL;
+
+            case "S":
+              return window.SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS;
+
+            case "s":
+              return window.SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL;
+
+            case "T":
+              return window.SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
+
+            case "t":
+              return window.SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL;
+
+            default:
+              return window.SVGPathSeg.PATHSEG_UNKNOWN;
+          }
+        };
+
+        Source.prototype._nextCommandHelper = function (lookahead, previousCommand) {
+          // Check for remaining coordinates in the current command.
+          if ((lookahead == "+" || lookahead == "-" || lookahead == "." || lookahead >= "0" && lookahead <= "9") && previousCommand != window.SVGPathSeg.PATHSEG_CLOSEPATH) {
+            if (previousCommand == window.SVGPathSeg.PATHSEG_MOVETO_ABS) return window.SVGPathSeg.PATHSEG_LINETO_ABS;
+            if (previousCommand == window.SVGPathSeg.PATHSEG_MOVETO_REL) return window.SVGPathSeg.PATHSEG_LINETO_REL;
+            return previousCommand;
+          }
+
+          return window.SVGPathSeg.PATHSEG_UNKNOWN;
+        };
+
+        Source.prototype.initialCommandIsMoveTo = function () {
+          // If the path is empty it is still valid, so return true.
+          if (!this.hasMoreData()) return true;
+          var command = this.peekSegmentType(); // Path must start with moveTo.
+
+          return command == window.SVGPathSeg.PATHSEG_MOVETO_ABS || command == window.SVGPathSeg.PATHSEG_MOVETO_REL;
+        }; // Parse a number from an SVG path. This very closely follows genericParseNumber(...) from Source/core/svg/SVGParserUtilities.cpp.
+        // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-PathDataBNF
+
+
+        Source.prototype._parseNumber = function () {
+          var exponent = 0;
+          var integer = 0;
+          var frac = 1;
+          var decimal = 0;
+          var sign = 1;
+          var expsign = 1;
+          var startIndex = this._currentIndex;
+
+          this._skipOptionalSpaces(); // Read the sign.
+
+
+          if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == "+") this._currentIndex++;else if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == "-") {
+            this._currentIndex++;
+            sign = -1;
+          }
+          if (this._currentIndex == this._endIndex || (this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9") && this._string.charAt(this._currentIndex) != ".") // The first character of a number must be one of [0-9+-.].
             return undefined; // Read the integer part, build right-to-left.
 
           var startIntPartIndex = this._currentIndex;
 
-          while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9")="" {="" this._currentindex++;="" }="" advance="" to="" first="" non-digit.="" if="" (this._currentindex="" !="startIntPartIndex)" var="" scanintpartindex="this._currentIndex" -="" 1;="" multiplier="1;" while="" (scanintpartindex="">= startIntPartIndex) {
+          while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9") {
+            this._currentIndex++;
+          } // Advance to first non-digit.
+
+
+          if (this._currentIndex != startIntPartIndex) {
+            var scanIntPartIndex = this._currentIndex - 1;
+            var multiplier = 1;
+
+            while (scanIntPartIndex >= startIntPartIndex) {
               integer += multiplier * (this._string.charAt(scanIntPartIndex--) - "0");
               multiplier *= 10;
             }
@@ -3803,9 +4060,46 @@
 
             if (this._currentIndex >= this._endIndex || this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9") return undefined;
 
-            while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= 1="" "9")="" {="" frac="" *="10;" decimal="" +="(this._string.charAt(this._currentIndex)" -="" "0")="" frac;="" this._currentindex="" }="" read="" the="" exponent="" part.="" if="" (this._currentindex="" !="startIndex" &&="" <="" this._endindex="" (this._string.charat(this._currentindex)="=" "e"="" ||="" this._string.charat(this._currentindex)="=" "e")="" this._string.charat(this._currentindex="" 1)="" )="" this._currentindex++;="" sign="" of="" exponent.="" "+")="" else="" "-")="" expsign="-1;" there="" must="" be="" an="">= this._endIndex || this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9") return undefined;
+            while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9") {
+              frac *= 10;
+              decimal += (this._string.charAt(this._currentIndex) - "0") / frac;
+              this._currentIndex += 1;
+            }
+          } // Read the exponent part.
 
-            while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9")="" {="" exponent="" *="10;" +="this._string.charAt(this._currentIndex)" -="" "0";="" this._currentindex++;="" }="" var="" number="integer" decimal;="" if="" (exponent)="" expsign="" exponent);="" (startindex="=" this._currentindex)="" return="" undefined;="" this._skipoptionalspacesordelimiter();="" number;="" };="" source.prototype._parsearcflag="function" ()="" (this._currentindex="">= this._endIndex) return undefined;
+
+          if (this._currentIndex != startIndex && this._currentIndex + 1 < this._endIndex && (this._string.charAt(this._currentIndex) == "e" || this._string.charAt(this._currentIndex) == "E") && this._string.charAt(this._currentIndex + 1) != "x" && this._string.charAt(this._currentIndex + 1) != "m") {
+            this._currentIndex++; // Read the sign of the exponent.
+
+            if (this._string.charAt(this._currentIndex) == "+") {
+              this._currentIndex++;
+            } else if (this._string.charAt(this._currentIndex) == "-") {
+              this._currentIndex++;
+              expsign = -1;
+            } // There must be an exponent.
+
+
+            if (this._currentIndex >= this._endIndex || this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9") return undefined;
+
+            while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9") {
+              exponent *= 10;
+              exponent += this._string.charAt(this._currentIndex) - "0";
+              this._currentIndex++;
+            }
+          }
+
+          var number = integer + decimal;
+          number *= sign;
+          if (exponent) number *= Math.pow(10, expsign * exponent);
+          if (startIndex == this._currentIndex) return undefined;
+
+          this._skipOptionalSpacesOrDelimiter();
+
+          return number;
+        };
+
+        Source.prototype._parseArcFlag = function () {
+          if (this._currentIndex >= this._endIndex) return undefined;
           var flag = false;
 
           var flagChar = this._string.charAt(this._currentIndex++);
@@ -5268,7 +5562,141 @@
     $$.radius = $$.radiusExpanded * 0.95;
     $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
     $$.innerRadius = $$.hasType('donut') || $$.hasType('gauge') ? $$.radius * $$.innerRadiusRatio : 0;
-    $$.gaugeArcWidth = w ? w : gaugeArcWidth <= 0="" 2="" $$.radius="" -="" $$.innerradius="" ?="" :="" gaugearcwidth="" <="$$.radius" $$.radius;="" };="" chartinternal.prototype.getpadangle="function" ()="" {="" if="" (this.hastype('pie'))="" return="" this.config.pie_padangle="" ||="" 0;="" }="" else="" (this.hastype('donut'))="" this.config.donut_padangle="" chartinternal.prototype.updatearc="function" var="" $$="this;" $$.svgarc="$$.getSvgArc();" $$.svgarcexpanded="$$.getSvgArcExpanded();" $$.svgarcexpandedsub="$$.getSvgArcExpanded(0.98);" chartinternal.prototype.updateangle="function" (d)="" config="$$.config," found="false," index="0," gmin,="" gmax,="" gtic,="" gvalue;="" (!config)="" null;="" $$.pie($$.filtertargetstoshow($$.data.targets)).foreach(function="" (t)="" (!found="" &&="" t.data.id="==" d.data.id)="" d="t;" d.index="index;" index++;="" });="" (isnan(d.startangle))="" d.startangle="0;" (isnan(d.endangle))="" d.endangle="d.startAngle;" ($$.isgaugetype(d.data))="" gmin="config.gauge_min;" gmax="config.gauge_max;" gtic="Math.PI" *="" (config.gauge_fullcircle="" 1)="" (gmax="" gmin);="" gvalue="d.value" d.value="" gmin;="" +="" chartinternal.prototype.getsvgarc="function" hasgaugetype="$$.hasType('gauge')," singlearcwidth="$$.gaugeArcWidth" $$.filtertargetstoshow($$.data.targets).length,="" arc="$$.d3.arc().outerRadius(function" }).innerradius(function="" (d.index="" $$.innerradius;="" }),="" newarc="function" newarc(d,="" withoutupdate)="" updated;="" (withoutupdate)="" arc(d);="" for="" interpolate="" updated="$$.updateAngle(d);" arc(updated)="" "m="" 0";="" todo:="" extends="" all="" function="" newarc.centroid="arc.centroid;" newarc;="" chartinternal.prototype.getsvgarcexpanded="function" (rate)="" rate="rate" 1;="" expandwidth="Math.min($$.radiusExpanded" $$.radius,="" 0.8="" (1="" rate)="" 100),="" $$.radiusexpanded="" rate;="" chartinternal.prototype.getarc="function" (d,="" withoutupdate,="" force)="" force="" this.isarctype(d.data)="" this.svgarc(d,="" chartinternal.prototype.transformforarclabel="function" c,="" x,="" y,="" h,="" ratio,="" translate="" ,="" hasgauge="$$.hasType('gauge');" (updated="" !hasgauge)="" c="this.svgArc.centroid(updated);" x="isNaN(c[0])" c[0];="" y="isNaN(c[1])" c[1];="" h="Math.sqrt(x" y);="" ($$.hastype('donut')="" config.donut_label_ratio)="" ratio="isFunction(config.donut_label_ratio)" config.donut_label_ratio(d,="" h)="" config.donut_label_ratio;="" ($$.hastype('pie')="" config.pie_label_ratio)="" config.pie_label_ratio(d,="" config.pie_label_ratio;="" (36=""> 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
+    $$.gaugeArcWidth = w ? w : gaugeArcWidth <= $$.radius - $$.innerRadius ? $$.radius - $$.innerRadius : gaugeArcWidth <= $$.radius ? gaugeArcWidth : $$.radius;
+  };
+
+  ChartInternal.prototype.getPadAngle = function () {
+    if (this.hasType('pie')) {
+      return this.config.pie_padAngle || 0;
+    } else if (this.hasType('donut')) {
+      return this.config.donut_padAngle || 0;
+    } else {
+      return 0;
+    }
+  };
+
+  ChartInternal.prototype.updateArc = function () {
+    var $$ = this;
+    $$.svgArc = $$.getSvgArc();
+    $$.svgArcExpanded = $$.getSvgArcExpanded();
+    $$.svgArcExpandedSub = $$.getSvgArcExpanded(0.98);
+  };
+
+  ChartInternal.prototype.updateAngle = function (d) {
+    var $$ = this,
+        config = $$.config,
+        found = false,
+        index = 0,
+        gMin,
+        gMax,
+        gTic,
+        gValue;
+
+    if (!config) {
+      return null;
+    }
+
+    $$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
+      if (!found && t.data.id === d.data.id) {
+        found = true;
+        d = t;
+        d.index = index;
+      }
+
+      index++;
+    });
+
+    if (isNaN(d.startAngle)) {
+      d.startAngle = 0;
+    }
+
+    if (isNaN(d.endAngle)) {
+      d.endAngle = d.startAngle;
+    }
+
+    if ($$.isGaugeType(d.data)) {
+      gMin = config.gauge_min;
+      gMax = config.gauge_max;
+      gTic = Math.PI * (config.gauge_fullCircle ? 2 : 1) / (gMax - gMin);
+      gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
+      d.startAngle = config.gauge_startingAngle;
+      d.endAngle = d.startAngle + gTic * gValue;
+    }
+
+    return found ? d : null;
+  };
+
+  ChartInternal.prototype.getSvgArc = function () {
+    var $$ = this,
+        hasGaugeType = $$.hasType('gauge'),
+        singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        arc = $$.d3.arc().outerRadius(function (d) {
+      return hasGaugeType ? $$.radius - singleArcWidth * d.index : $$.radius;
+    }).innerRadius(function (d) {
+      return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
+    }),
+        newArc = function newArc(d, withoutUpdate) {
+      var updated;
+
+      if (withoutUpdate) {
+        return arc(d);
+      } // for interpolate
+
+
+      updated = $$.updateAngle(d);
+      return updated ? arc(updated) : "M 0 0";
+    }; // TODO: extends all function
+
+
+    newArc.centroid = arc.centroid;
+    return newArc;
+  };
+
+  ChartInternal.prototype.getSvgArcExpanded = function (rate) {
+    rate = rate || 1;
+    var $$ = this,
+        hasGaugeType = $$.hasType('gauge'),
+        singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        expandWidth = Math.min($$.radiusExpanded * rate - $$.radius, singleArcWidth * 0.8 - (1 - rate) * 100),
+        arc = $$.d3.arc().outerRadius(function (d) {
+      return hasGaugeType ? $$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * rate;
+    }).innerRadius(function (d) {
+      return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
+    });
+    return function (d) {
+      var updated = $$.updateAngle(d);
+      return updated ? arc(updated) : "M 0 0";
+    };
+  };
+
+  ChartInternal.prototype.getArc = function (d, withoutUpdate, force) {
+    return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
+  };
+
+  ChartInternal.prototype.transformForArcLabel = function (d) {
+    var $$ = this,
+        config = $$.config,
+        updated = $$.updateAngle(d),
+        c,
+        x,
+        y,
+        h,
+        ratio,
+        translate = "",
+        hasGauge = $$.hasType('gauge');
+
+    if (updated && !hasGauge) {
+      c = this.svgArc.centroid(updated);
+      x = isNaN(c[0]) ? 0 : c[0];
+      y = isNaN(c[1]) ? 0 : c[1];
+      h = Math.sqrt(x * x + y * y);
+
+      if ($$.hasType('donut') && config.donut_label_ratio) {
+        ratio = isFunction(config.donut_label_ratio) ? config.donut_label_ratio(d, $$.radius, h) : config.donut_label_ratio;
+      } else if ($$.hasType('pie') && config.pie_label_ratio) {
+        ratio = isFunction(config.pie_label_ratio) ? config.pie_label_ratio(d, $$.radius, h) : config.pie_label_ratio;
+      } else {
+        ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
       }
 
       translate = "translate(" + x * ratio + ',' + y * ratio + ")";
@@ -6614,7 +7042,95 @@
           } // mark as x = undefined if value is undefined and filter to remove after mapped
 
 
-          if (isUndefined(d[id]) || $$.data.xs[id].length <= 0="" i)="" {="" x="undefined;" }="" returndata="{" x:="" x,="" value:="" value,="" id:="" convertedid="" };="" if="" ($$.isstanfordgraphtype())="" returndata.epochs="d[epochs];" return="" returndata;="" }).filter(function="" (v)="" isdefined(v.x);="" })="" });="" finish="" targets="" targets.foreach(function="" (t)="" var="" i;="" sort="" values="" by="" its="" (config.data_xsort)="" t.values="t.values.sort(function" (v1,="" v2)="" x1="v1.x" ||="" v1.x="==" ?="" :="" infinity,="" x2="v2.x" v2.x="==" infinity;="" -="" x2;="" indexing="" each="" value="" i="0;" t.values.foreach(function="" v.index="i++;" this="" needs="" to="" be="" sorted="" because="" index="" and="" value.index="" is="" identical="" $$.data.xs[t.id].sort(function="" v1="" v2;="" cache="" information="" about="" $$.hasnegativevalue="$$.hasNegativeValueInTargets(targets);" $$.haspositivevalue="$$.hasPositiveValueInTargets(targets);" set="" target="" types="" (config.data_type)="" $$.settargettype($$.maptoids(targets).filter(function="" (id)="" !(id="" in="" config.data_types);="" }),="" config.data_type);="" as="" original="" id="" keyed="" (d)="" $$.addcache(d.id_org,="" d);="" targets;="" chartinternal.prototype.isepochs="function" (key)="" $$="this," config="$$.config;" config.data_epochs="" &&="" key="==" config.data_epochs;="" chartinternal.prototype.isx="function" config.data_x="" notempty(config.data_xs)="" hasvalue(config.data_xs,="" key);="" chartinternal.prototype.isnotx="function" !this.isx(key);="" chartinternal.prototype.isnotxandnotepochs="function" !this.isx(key)="" !this.isepochs(key);="" **="" *="" returns="" whether="" the="" normalized="" stack="" option="" enabled="" or="" not.="" it="" must="" also="" have="" data.groups="" defined.="" @return="" {boolean}="" chartinternal.prototype.isstacknormalized="function" ()="" this.config.data_stack_normalize="" this.config.data_groups.length=""> 0;
+          if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
+            x = undefined;
+          }
+
+          returnData = {
+            x: x,
+            value: value,
+            id: convertedId
+          };
+
+          if ($$.isStanfordGraphType()) {
+            returnData.epochs = d[epochs];
+          }
+
+          return returnData;
+        }).filter(function (v) {
+          return isDefined(v.x);
+        })
+      };
+    }); // finish targets
+
+    targets.forEach(function (t) {
+      var i; // sort values by its x
+
+      if (config.data_xSort) {
+        t.values = t.values.sort(function (v1, v2) {
+          var x1 = v1.x || v1.x === 0 ? v1.x : Infinity,
+              x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
+          return x1 - x2;
+        });
+      } // indexing each value
+
+
+      i = 0;
+      t.values.forEach(function (v) {
+        v.index = i++;
+      }); // this needs to be sorted because its index and value.index is identical
+
+      $$.data.xs[t.id].sort(function (v1, v2) {
+        return v1 - v2;
+      });
+    }); // cache information about values
+
+    $$.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
+    $$.hasPositiveValue = $$.hasPositiveValueInTargets(targets); // set target types
+
+    if (config.data_type) {
+      $$.setTargetType($$.mapToIds(targets).filter(function (id) {
+        return !(id in config.data_types);
+      }), config.data_type);
+    } // cache as original id keyed
+
+
+    targets.forEach(function (d) {
+      $$.addCache(d.id_org, d);
+    });
+    return targets;
+  };
+
+  ChartInternal.prototype.isEpochs = function (key) {
+    var $$ = this,
+        config = $$.config;
+    return config.data_epochs && key === config.data_epochs;
+  };
+
+  ChartInternal.prototype.isX = function (key) {
+    var $$ = this,
+        config = $$.config;
+    return config.data_x && key === config.data_x || notEmpty(config.data_xs) && hasValue(config.data_xs, key);
+  };
+
+  ChartInternal.prototype.isNotX = function (key) {
+    return !this.isX(key);
+  };
+
+  ChartInternal.prototype.isNotXAndNotEpochs = function (key) {
+    return !this.isX(key) && !this.isEpochs(key);
+  };
+  /**
+   * Returns whether the normalized stack option is enabled or not.
+   *
+   * To be enabled it must also have data.groups defined.
+   *
+   * @return {boolean}
+   */
+
+
+  ChartInternal.prototype.isStackNormalized = function () {
+    return this.config.data_stack_normalize && this.config.data_groups.length > 0;
   };
   /**
    * Returns whether the axis is normalized or not.
@@ -7090,7 +7606,122 @@
         id: t.id,
         id_org: t.id_org,
         values: t.values.filter(function (v) {
-          return xDomain[0] <= 2="" v.x="" &&="" <="xDomain[1];" })="" };="" });="" chartinternal.prototype.hasdatalabel="function" ()="" {="" var="" config="this.config;" if="" (typeof="" config.data_labels="==" 'boolean'="" config.data_labels)="" return="" true;="" }="" else="" (_typeof(config.data_labels)="==" 'object'="" notempty(config.data_labels))="" false;="" chartinternal.prototype.getdatalabellength="function" (min,="" max,="" key)="" $$="this," lengths="[0," 0],="" paddingcoef="1.3;" $$.selectchart.select('svg').selectall('.dummy').data([min,="" max]).enter().append('text').text(function="" (d)="" $$.datalabelformat(d.id)(d);="" }).each(function="" (d,="" i)="" lengths[i]="getBBox(this)[key]" *="" paddingcoef;="" }).remove();="" lengths;="" **="" returns="" true="" the="" given="" data="" point="" is="" not="" arc="" type,="" otherwise="" false.="" @param="" {object}="" d="" @return="" {boolean}="" chartinternal.prototype.isnonearc="function" this.hastarget(this.data.targets,="" d.id);="" chartinternal.prototype.isarc="function" 'data'="" in="" d.data.id);="" find="" closest="" from="" pos="" among="" targets="" or="" undefined="" none="" satisfies="" conditions.="" {array}="" an="" [x,y]="" coordinate="" {object|undefined}="" chartinternal.prototype.findclosestfromtargets="function" (targets,="" pos)="" for="" each="" target,="" candidates="targets.map(function" (t)="" $$.findclosest(t.values,="" pos,="" $$.config.tooltip_horizontal="" ?="" $$.horizontaldistance.bind($$)="" :="" $$.dist.bind($$),="" $$.config.point_sensitivity);="" }).filter(function="" (v)="" v;="" of="" (candidates.length="==" 0)="" undefined;="" 1)="" candidates[0];="" $$.findclosest(candidates,="" $$.dist.bind($$));="" x="" value="" a="" on="" axis="" chartinternal.prototype.findclosestfromtargetsbyx="function" x)="" closest;="" diff;="" targets.foreach(function="" t.values.foreach(function="" newdiff="Math.abs(x" -="" d.x);="" (diff="==" ||="" diff)="" diff="newDiff;" using="" compute="" distance="" method,="" position.="" giving="" optionally="" minimum="" to="" satisfy.="" datapoints="" list="" {function}="" computedist="" function="" between="" points="" {number}="" mindist="" minimal="" satisfy="" chartinternal.prototype.findclosest="function" (datapoints,="" computedist)=""> 3 && arguments[3] !== undefined ? arguments[3] : Infinity;
+          return xDomain[0] <= v.x && v.x <= xDomain[1];
+        })
+      };
+    });
+  };
+
+  ChartInternal.prototype.hasDataLabel = function () {
+    var config = this.config;
+
+    if (typeof config.data_labels === 'boolean' && config.data_labels) {
+      return true;
+    } else if (_typeof(config.data_labels) === 'object' && notEmpty(config.data_labels)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  ChartInternal.prototype.getDataLabelLength = function (min, max, key) {
+    var $$ = this,
+        lengths = [0, 0],
+        paddingCoef = 1.3;
+    $$.selectChart.select('svg').selectAll('.dummy').data([min, max]).enter().append('text').text(function (d) {
+      return $$.dataLabelFormat(d.id)(d);
+    }).each(function (d, i) {
+      lengths[i] = getBBox(this)[key] * paddingCoef;
+    }).remove();
+    return lengths;
+  };
+  /**
+   * Returns true if the given data point is not arc type, otherwise false.
+   * @param {Object} d The data point
+   * @return {boolean}
+   */
+
+
+  ChartInternal.prototype.isNoneArc = function (d) {
+    return this.hasTarget(this.data.targets, d.id);
+  };
+  /**
+   * Returns true if the given data point is arc type, otherwise false.
+   * @param {Object} d The data point
+   * @return {boolean}
+   */
+
+
+  ChartInternal.prototype.isArc = function (d) {
+    return 'data' in d && this.hasTarget(this.data.targets, d.data.id);
+  };
+  /**
+   * Find the closest point from the given pos among the given targets or
+   * undefined if none satisfies conditions.
+   *
+   * @param {Array} targets
+   * @param {Array} pos An [x,y] coordinate
+   * @return {Object|undefined}
+   */
+
+
+  ChartInternal.prototype.findClosestFromTargets = function (targets, pos) {
+    var $$ = this; // for each target, find the closest point
+
+    var candidates = targets.map(function (t) {
+      return $$.findClosest(t.values, pos, $$.config.tooltip_horizontal ? $$.horizontalDistance.bind($$) : $$.dist.bind($$), $$.config.point_sensitivity);
+    }).filter(function (v) {
+      return v;
+    }); // returns the closest of candidates
+
+    if (candidates.length === 0) {
+      return undefined;
+    } else if (candidates.length === 1) {
+      return candidates[0];
+    } else {
+      return $$.findClosest(candidates, pos, $$.dist.bind($$));
+    }
+  };
+  /**
+   * Find the closest point from the x value or undefined if none satisfies conditions.
+   *
+   * @param {Array} targets
+   * @param {Array} x A value on X axis
+   * @return {Object|undefined}
+   */
+
+
+  ChartInternal.prototype.findClosestFromTargetsByX = function (targets, x) {
+    var closest;
+    var diff;
+    targets.forEach(function (t) {
+      t.values.forEach(function (d) {
+        var newDiff = Math.abs(x - d.x);
+
+        if (diff === undefined || newDiff < diff) {
+          closest = d;
+          diff = newDiff;
+        }
+      });
+    });
+    return closest;
+  };
+  /**
+   * Using given compute distance method, returns the closest data point from the
+   * given position.
+   *
+   * Giving optionally a minimum distance to satisfy.
+   *
+   * @param {Array} dataPoints List of DataPoints
+   * @param {Array} pos An [x,y] coordinate
+   * @param {Function} computeDist Function to compute distance between 2 points
+   * @param {Number} minDist Minimal distance to satisfy
+   * @return {Object|undefined} Closest data point
+   */
+
+
+  ChartInternal.prototype.findClosest = function (dataPoints, pos, computeDist) {
+    var minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : Infinity;
     var $$ = this;
     var closest; // find closest bar
 
@@ -7483,7 +8114,107 @@
     }
 
     isAllPositive = yDomainMin >= 0 && yDomainMax >= 0;
-    isAllNegative = yDomainMin <= 0="" &&="" ydomainmax="" <="0;" cancel="" zerobased="" if="" axis_*_min="" axis_*_max="" specified="" (isvalue(ymin)="" isallpositive="" ||="" isvalue(ymax)="" isallnegative)="" {="" iszerobased="false;" }="" bar="" area="" chart="" should="" be="" 0-based="" all="" positive|negative="" (iszerobased)="" (isallpositive)="" ydomainmin="0;" (isallnegative)="" domainlength="Math.abs(yDomainMax" -="" ydomainmin);="" padding_top="padding_bottom" =="" *="" 0.1;="" (typeof="" center="" !="=" 'undefined')="" ydomainabs="Math.max(Math.abs(yDomainMin)," math.abs(ydomainmax));="" +="" ydomainabs;="" add="" padding="" for="" data="" label="" (showhorizontaldatalabel)="" lengths="$$.getDataLabelLength(yDomainMin," ydomainmax,="" 'width');="" diff="diffDomain($$.y.range());" ratio="[lengths[0]" diff,="" lengths[1]="" diff];="" (ratio[1]="" (1="" ratio[0]="" ratio[1]));="" padding_bottom="" (ratio[0]="" else="" (showverticaldatalabel)="" 'height');="" var="" pixelstoaxispadding="$$.getY(config["axis_".concat(axisId," "_type")],="" input="" domain="" as="" pixels="" [0,="" config.axis_rotated="" ?="" $$.width="" :="" $$.height],="" output="" range="" axis="" domainlength]);="" (axisid="==" 'y'="" notempty(config.axis_y_padding))="" 'top',="" padding_top,="" domainlength);="" 'bottom',="" padding_bottom,="" 'y2'="" notempty(config.axis_y2_padding))="" padding_top];="" return="" isinverted="" domain.reverse()="" domain;="" };="" chartinternal.prototype.getxdomainmin="function" (targets)="" $$="this," config="$$.config;" isdefined(config.axis_x_min)="" $$.istimeseries()="" this.parsedate(config.axis_x_min)="" config.axis_x_min="" $$.d3.min(targets,="" function="" (t)="" $$.d3.min(t.values,="" (v)="" v.x;="" });="" chartinternal.prototype.getxdomainmax="function" isdefined(config.axis_x_max)="" this.parsedate(config.axis_x_max)="" config.axis_x_max="" $$.d3.max(targets,="" $$.d3.max(t.values,="" chartinternal.prototype.getxdomainpadding="function" (domain)="" domain[0],="" maxdatacount,="" padding,="" paddingleft,="" paddingright;="" ($$.iscategorized())="" ($$.hastype('bar'))="" maxdatacount="$$.getMaxDataCount();"> 1 ? diff / (maxDataCount - 1) / 2 : 0.5;
+    isAllNegative = yDomainMin <= 0 && yDomainMax <= 0; // Cancel zerobased if axis_*_min / axis_*_max specified
+
+    if (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) {
+      isZeroBased = false;
+    } // Bar/Area chart should be 0-based if all positive|negative
+
+
+    if (isZeroBased) {
+      if (isAllPositive) {
+        yDomainMin = 0;
+      }
+
+      if (isAllNegative) {
+        yDomainMax = 0;
+      }
+    }
+
+    domainLength = Math.abs(yDomainMax - yDomainMin);
+    padding_top = padding_bottom = domainLength * 0.1;
+
+    if (typeof center !== 'undefined') {
+      yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
+      yDomainMax = center + yDomainAbs;
+      yDomainMin = center - yDomainAbs;
+    } // add padding for data label
+
+
+    if (showHorizontalDataLabel) {
+      lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, 'width');
+      diff = diffDomain($$.y.range());
+      ratio = [lengths[0] / diff, lengths[1] / diff];
+      padding_top += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1]));
+      padding_bottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
+    } else if (showVerticalDataLabel) {
+      lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, 'height');
+      var pixelsToAxisPadding = $$.getY(config["axis_".concat(axisId, "_type")], // input domain as pixels
+      [0, config.axis_rotated ? $$.width : $$.height], // output range as axis padding
+      [0, domainLength]);
+      padding_top += pixelsToAxisPadding(lengths[1]);
+      padding_bottom += pixelsToAxisPadding(lengths[0]);
+    }
+
+    if (axisId === 'y' && notEmpty(config.axis_y_padding)) {
+      padding_top = $$.axis.getPadding(config.axis_y_padding, 'top', padding_top, domainLength);
+      padding_bottom = $$.axis.getPadding(config.axis_y_padding, 'bottom', padding_bottom, domainLength);
+    }
+
+    if (axisId === 'y2' && notEmpty(config.axis_y2_padding)) {
+      padding_top = $$.axis.getPadding(config.axis_y2_padding, 'top', padding_top, domainLength);
+      padding_bottom = $$.axis.getPadding(config.axis_y2_padding, 'bottom', padding_bottom, domainLength);
+    } // Bar/Area chart should be 0-based if all positive|negative
+
+
+    if (isZeroBased) {
+      if (isAllPositive) {
+        padding_bottom = yDomainMin;
+      }
+
+      if (isAllNegative) {
+        padding_top = -yDomainMax;
+      }
+    }
+
+    domain = [yDomainMin - padding_bottom, yDomainMax + padding_top];
+    return isInverted ? domain.reverse() : domain;
+  };
+
+  ChartInternal.prototype.getXDomainMin = function (targets) {
+    var $$ = this,
+        config = $$.config;
+    return isDefined(config.axis_x_min) ? $$.isTimeSeries() ? this.parseDate(config.axis_x_min) : config.axis_x_min : $$.d3.min(targets, function (t) {
+      return $$.d3.min(t.values, function (v) {
+        return v.x;
+      });
+    });
+  };
+
+  ChartInternal.prototype.getXDomainMax = function (targets) {
+    var $$ = this,
+        config = $$.config;
+    return isDefined(config.axis_x_max) ? $$.isTimeSeries() ? this.parseDate(config.axis_x_max) : config.axis_x_max : $$.d3.max(targets, function (t) {
+      return $$.d3.max(t.values, function (v) {
+        return v.x;
+      });
+    });
+  };
+
+  ChartInternal.prototype.getXDomainPadding = function (domain) {
+    var $$ = this,
+        config = $$.config,
+        diff = domain[1] - domain[0],
+        maxDataCount,
+        padding,
+        paddingLeft,
+        paddingRight;
+
+    if ($$.isCategorized()) {
+      padding = 0;
+    } else if ($$.hasType('bar')) {
+      maxDataCount = $$.getMaxDataCount();
+      padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : 0.5;
     } else {
       padding = diff * 0.01;
     }
@@ -7569,7 +8300,408 @@
         min = zoomDomain[0],
         max = zoomDomain[1];
 
-    if (domain[0] <= 0="" 2="" 4="" min)="" {="" domain[1]="+domain[1]" +="" (min="" -="" domain[0]);="" domain[0]="min;" }="" if="" (max="" <="domain[1])" (domain[1]="" max);="" return="" domain;="" };="" chartinternal.prototype.drag="function" (mouse)="" var="" $$="this," config="$$.config," main="$$.main," d3="$$.d3;" sx,="" sy,="" mx,="" my,="" minx,="" maxx,="" miny,="" maxy;="" ($$.hasarctype())="" return;="" (!config.data_selection_enabled)="" do="" nothing="" not="" selectable="" (!config.data_selection_multiple)="" skip="" when="" single="" selection="" because="" drag="" is="" used="" for="" multiple sx="$$.dragStart[0];" sy="$$.dragStart[1];" mx="mouse[0];" my="mouse[1];" minx="Math.min(sx," mx);="" maxx="Math.max(sx," miny="config.data_selection_grouped" ?="" $$.margin.top="" :="" math.min(sy,="" my);="" maxy="config.data_selection_grouped" $$.height="" math.max(sy,="" main.select('.'="" class.dragarea).attr('x',="" minx).attr('y',="" miny).attr('width',="" minx).attr('height',="" miny);="" todo:="" binary="" search="" xs="" main.selectall('.'="" class.shapes).selectall('.'="" class.shape).filter(function="" (d)="" config.data_selection_isselectable(d);="" }).each(function="" (d,="" i)="" shape="d3.select(this)," isselected="shape.classed(CLASS.SELECTED)," isincluded="shape.classed(CLASS.INCLUDED)," _x,="" _y,="" _w,="" _h,="" toggle,="" iswithin="false," box;="" (shape.classed(class.circle))="" _x="shape.attr("cx")" *="" 1;="" _y="shape.attr("cy")" toggle="$$.togglePoint;" &&="" else="" (shape.classed(class.bar))="" box="getPathBox(this);" _w="box.width;" _h="box.height;" ||="" minx)="" !(maxy="" line="" area="" supported="" yet="" (iswithin="" ^="" isincluded)="" shape.classed(class.included,="" !isincluded);="" included="" unincluded="" callback="" here="" shape.classed(class.selected,="" !isselected);="" toggle.call($$,="" !isselected,="" shape,="" d,="" i);="" });="" chartinternal.prototype.dragstart="function" $$.dragstart="mouse;" $$.main.select('.'="" class.chart).append('rect').attr('class',="" class.dragarea).style('opacity',="" 0.1);="" $$.dragging="true;" chartinternal.prototype.dragend="function" ()="" class.dragarea).transition().duration(100).style('opacity',="" 0).remove();="" $$.main.selectall('.'="" class.shape).classed(class.included,="" false);="" chartinternal.prototype.getyformat="function" (forarc)="" formatfory="forArc" !$$.hastype('gauge')="" $$.defaultarcvalueformat="" $$.yformat,="" formatfory2="forArc" $$.y2format;="" function="" (v,="" ratio,="" id)="" format="$$.axis.getId(id)" =="=" 'y2'="" formatfory;="" format.call($$,="" v,="" ratio);="" chartinternal.prototype.yformat="function" (v)="" config.axis_y_tick_format="" $$.defaultvalueformat;="" format(v);="" chartinternal.prototype.y2format="function" config.axis_y2_tick_format="" chartinternal.prototype.defaultvalueformat="function" isvalue(v)="" +v="" "";="" chartinternal.prototype.defaultarcvalueformat="function" ratio)="" (ratio="" 100).tofixed(1)="" '%';="" chartinternal.prototype.datalabelformat="function" (targetid)="" data_labels="$$.config.data_labels," format,="" defaultformat="function" defaultformat(v)="" find="" according="" to="" axis="" id="" (typeof="" data_labels.format="==" 'function')="" (_typeof(data_labels.format)="==" 'object')="" (data_labels.format[targetid])="" true="" data_labels.format[targetid];="" format()="" '';="" format;="" chartinternal.prototype.initgrid="function" $$.grid="$$.main.append('g').attr("clip-path"," $$.clippathforgrid).attr('class',="" class.grid);="" (config.grid_x_show)="" $$.grid.append("g").attr("class",="" class.xgrids);="" (config.grid_y_show)="" $$.grid.append('g').attr('class',="" class.ygrids);="" (config.grid_focus_show)="" $$.grid.append('g').attr("class",="" class.xgridfocus).append('line').attr('class',="" class.xgridfocus);="" $$.xgrid="d3.selectAll([]);" (!config.grid_lines_front)="" $$.initgridlines();="" chartinternal.prototype.initgridlines="function" $$.gridlines="$$.main.append('g').attr("clip-path"," class.grid="" '="" class.gridlines);="" $$.gridlines.append('g').attr("class",="" class.xgridlines);="" $$.gridlines.append('g').attr('class',="" class.ygridlines);="" $$.xgridlines="d3.selectAll([]);" chartinternal.prototype.updatexgrid="function" (withoutupdate)="" xgriddata="$$.generateGridData(config.grid_x_type," $$.x),="" tickoffset="$$.isCategorized()" $$.xaxis.tickoffset()="" 0;="" $$.xgridattr="config.axis_rotated" 'x1':="" 0,="" 'x2':="" $$.width,="" 'y1':="" y1(d)="" $$.x(d)="" tickoffset;="" },="" 'y2':="" y2(d)="" x1(d)="" x2(d)="" $$.xgridattr.opacity="function" pos="+d3.select(this).attr(config.axis_rotated" 'y1'="" 'x1');="" (config.axis_rotated="" 0)="" xgrid="$$.main.select('.'" class.xgrids).selectall('.'="" class.xgrid).data(xgriddata);="" xgridenter="xgrid.enter().append('line').attr("class"," class.xgrid).attr('x1',="" $$.xgridattr.x1).attr('x2',="" $$.xgridattr.x2).attr('y1',="" $$.xgridattr.y1).attr('y2',="" $$.xgridattr.y2).style("opacity",="" 0);="" (!withoutupdate)="" $$.xgrid.attr('x1',="" $$.xgridattr.opacity);="" xgrid.exit().remove();="" chartinternal.prototype.updateygrid="function" gridvalues="$$.yAxis.tickValues()" $$.y.ticks(config.grid_y_ticks);="" ygrid="$$.main.select('.'" class.ygrids).selectall('.'="" class.ygrid).data(gridvalues);="" ygridenter="ygrid.enter().append('line')" x1,="" x2,="" y1,="" y2,="" opacity="" need="" be="" set="" maybe="" .attr('class',="" class.ygrid);="" $$.ygrid="ygridEnter.merge(ygrid);" $$.ygrid.attr("x1",="" config.axis_rotated="" $$.y="" 0).attr("x2",="" $$.width).attr("y1",="" $$.y).attr("y2",="" $$.y);="" ygrid.exit().remove();="" $$.smoothlines($$.ygrid,="" 'grid');="" chartinternal.prototype.gridtextanchor="function" d.position="" "end";="" chartinternal.prototype.gridtextdx="function" 'start'="" 'middle'="" -4;="" chartinternal.prototype.xgridtextx="function" -this.height="" chartinternal.prototype.ygridtextx="function" this.width="" this.width;="" chartinternal.prototype.updategrid="function" (duration)="" xgridline,="" xgridlineenter,="" ygridline,="" ygridlineenter,="" xv="$$.xv.bind($$)," yv="$$.yv.bind($$)," xgridtextx="$$.xGridTextX.bind($$)," ygridtextx="$$.yGridTextX.bind($$);" hide="" arc="" type="" $$.grid.style('visibility',="" $$.hasarctype()="" 'hidden'="" 'visible');="" main.select('line.'="" class.xgridfocus).style("visibility",="" "hidden");="" $$.updatexgrid();="" xgridline="main.select('.'" class.xgridlines).selectall('.'="" class.xgridline).data(config.grid_x_lines);="" enter="" xgridlineenter="xgridLine.enter().append('g').attr("class"," class.xgridline="" (d['class']="" d['class']="" '');="" xgridlineenter.append('line').attr("x1",="" xv).attr("x2",="" $$.width="" xv).attr("y1",="" 0).attr("y2",="" $$.height).style("opacity",="" xgridlineenter.append('text').attr("text-anchor",="" $$.gridtextanchor).attr("transform",="" ""="" "rotate(-90)").attr("x",="" xgridtextx).attr("y",="" xv).attr('dx',="" $$.gridtextdx).attr('dy',="" -5).style("opacity",="" udpate="" done="" in="" d3.transition()="" of="" the="" end="" this="" exit="" xgridline.exit().transition().duration(duration).style("opacity",="" y-grid="" $$.updateygrid();="" ygridline="main.select('.'" class.ygridlines).selectall('.'="" class.ygridline).data(config.grid_y_lines);="" ygridlineenter="ygridLine.enter().append('g').attr("class"," class.ygridline="" ygridlineenter.append('line').attr("x1",="" yv).attr("y2",="" yv).style("opacity",="" ygridlineenter.append('text').attr("text-anchor",="" "rotate(-90)"="" "").attr("x",="" ygridtextx).attr("y",="" yv).attr('dx',="" update="" $$.ygridlines="ygridLineEnter.merge(ygridLine);" $$.ygridlines.select('line').transition().duration(duration).attr("x1",="" 1);="" $$.ygridlines.select('text').transition().duration(duration).attr("x",="" $$.xgridtextx.bind($$)="" $$.ygridtextx.bind($$)).attr("y",="" yv).text(function="" d.text;="" }).style("opacity",="" ygridline.exit().transition().duration(duration).style("opacity",="" chartinternal.prototype.redrawgrid="function" (withtransition,="" transition)="" lines="$$.xgridLines.select('line')," texts="$$.xgridLines.select('text');" [(withtransition="" lines.transition(transition)="" lines).attr("x1",="" 1),="" (withtransition="" texts.transition(transition)="" texts).attr("x",="" $$.ygridtextx.bind($$)="" $$.xgridtextx.bind($$)).attr("y",="" xv).text(function="" 1)];="" chartinternal.prototype.showxgridfocus="function" (selecteddata)="" datatoshow="selectedData.filter(function" d="" isvalue(d.value);="" }),="" focusel="$$.main.selectAll('line.'" class.xgridfocus),="" xx="$$.xx.bind($$);" (!config.tooltip_show)="" stanford="" plot="" exists="" ($$.hastype('stanford')="" $$.hasarctype())="" focusel.style("visibility",="" "visible").data([datatoshow[0]]).attr(config.axis_rotated="" 'x1',="" xx).attr(config.axis_rotated="" 'x2',="" xx);="" $$.smoothlines(focusel,="" chartinternal.prototype.hidexgridfocus="function" this.main.select('line.'="" chartinternal.prototype.updatexgridfocus="function" $$.main.select('line.'="" class.xgridfocus).attr("x1",="" -10).attr("x2",="" -10).attr("y1",="" -10="" $$.height);="" chartinternal.prototype.generategriddata="function" (type,="" scale)="" griddata="[]," xdomain,="" firstyear,="" lastyear,="" i,="" ticknum="$$.main.select("."" class.axisx).selectall('.tick').size();="" (type="==" 'year')="" xdomain="$$.getXDomain();" firstyear="xDomain[0].getFullYear();" lastyear="xDomain[1].getFullYear();" (i="firstYear;" i="" i++)="" griddata.push(new="" date(i="" '-01-01="" 00:00:00'));="" (griddata.length=""> tickNum) {
+    if (domain[0] <= min) {
+      domain[1] = +domain[1] + (min - domain[0]);
+      domain[0] = min;
+    }
+
+    if (max <= domain[1]) {
+      domain[0] = +domain[0] - (domain[1] - max);
+      domain[1] = max;
+    }
+
+    return domain;
+  };
+
+  ChartInternal.prototype.drag = function (mouse) {
+    var $$ = this,
+        config = $$.config,
+        main = $$.main,
+        d3 = $$.d3;
+    var sx, sy, mx, my, minX, maxX, minY, maxY;
+
+    if ($$.hasArcType()) {
+      return;
+    }
+
+    if (!config.data_selection_enabled) {
+      return;
+    } // do nothing if not selectable
+
+
+    if (!config.data_selection_multiple) {
+      return;
+    } // skip when single selection because drag is used for multiple selection
+
+
+    sx = $$.dragStart[0];
+    sy = $$.dragStart[1];
+    mx = mouse[0];
+    my = mouse[1];
+    minX = Math.min(sx, mx);
+    maxX = Math.max(sx, mx);
+    minY = config.data_selection_grouped ? $$.margin.top : Math.min(sy, my);
+    maxY = config.data_selection_grouped ? $$.height : Math.max(sy, my);
+    main.select('.' + CLASS.dragarea).attr('x', minX).attr('y', minY).attr('width', maxX - minX).attr('height', maxY - minY); // TODO: binary search when multiple xs
+
+    main.selectAll('.' + CLASS.shapes).selectAll('.' + CLASS.shape).filter(function (d) {
+      return config.data_selection_isselectable(d);
+    }).each(function (d, i) {
+      var shape = d3.select(this),
+          isSelected = shape.classed(CLASS.SELECTED),
+          isIncluded = shape.classed(CLASS.INCLUDED),
+          _x,
+          _y,
+          _w,
+          _h,
+          toggle,
+          isWithin = false,
+          box;
+
+      if (shape.classed(CLASS.circle)) {
+        _x = shape.attr("cx") * 1;
+        _y = shape.attr("cy") * 1;
+        toggle = $$.togglePoint;
+        isWithin = minX < _x && _x < maxX && minY < _y && _y < maxY;
+      } else if (shape.classed(CLASS.bar)) {
+        box = getPathBox(this);
+        _x = box.x;
+        _y = box.y;
+        _w = box.width;
+        _h = box.height;
+        toggle = $$.togglePath;
+        isWithin = !(maxX < _x || _x + _w < minX) && !(maxY < _y || _y + _h < minY);
+      } else {
+        // line/area selection not supported yet
+        return;
+      }
+
+      if (isWithin ^ isIncluded) {
+        shape.classed(CLASS.INCLUDED, !isIncluded); // TODO: included/unincluded callback here
+
+        shape.classed(CLASS.SELECTED, !isSelected);
+        toggle.call($$, !isSelected, shape, d, i);
+      }
+    });
+  };
+
+  ChartInternal.prototype.dragstart = function (mouse) {
+    var $$ = this,
+        config = $$.config;
+
+    if ($$.hasArcType()) {
+      return;
+    }
+
+    if (!config.data_selection_enabled) {
+      return;
+    } // do nothing if not selectable
+
+
+    $$.dragStart = mouse;
+    $$.main.select('.' + CLASS.chart).append('rect').attr('class', CLASS.dragarea).style('opacity', 0.1);
+    $$.dragging = true;
+  };
+
+  ChartInternal.prototype.dragend = function () {
+    var $$ = this,
+        config = $$.config;
+
+    if ($$.hasArcType()) {
+      return;
+    }
+
+    if (!config.data_selection_enabled) {
+      return;
+    } // do nothing if not selectable
+
+
+    $$.main.select('.' + CLASS.dragarea).transition().duration(100).style('opacity', 0).remove();
+    $$.main.selectAll('.' + CLASS.shape).classed(CLASS.INCLUDED, false);
+    $$.dragging = false;
+  };
+
+  ChartInternal.prototype.getYFormat = function (forArc) {
+    var $$ = this,
+        formatForY = forArc && !$$.hasType('gauge') ? $$.defaultArcValueFormat : $$.yFormat,
+        formatForY2 = forArc && !$$.hasType('gauge') ? $$.defaultArcValueFormat : $$.y2Format;
+    return function (v, ratio, id) {
+      var format = $$.axis.getId(id) === 'y2' ? formatForY2 : formatForY;
+      return format.call($$, v, ratio);
+    };
+  };
+
+  ChartInternal.prototype.yFormat = function (v) {
+    var $$ = this,
+        config = $$.config,
+        format = config.axis_y_tick_format ? config.axis_y_tick_format : $$.defaultValueFormat;
+    return format(v);
+  };
+
+  ChartInternal.prototype.y2Format = function (v) {
+    var $$ = this,
+        config = $$.config,
+        format = config.axis_y2_tick_format ? config.axis_y2_tick_format : $$.defaultValueFormat;
+    return format(v);
+  };
+
+  ChartInternal.prototype.defaultValueFormat = function (v) {
+    return isValue(v) ? +v : "";
+  };
+
+  ChartInternal.prototype.defaultArcValueFormat = function (v, ratio) {
+    return (ratio * 100).toFixed(1) + '%';
+  };
+
+  ChartInternal.prototype.dataLabelFormat = function (targetId) {
+    var $$ = this,
+        data_labels = $$.config.data_labels,
+        format,
+        defaultFormat = function defaultFormat(v) {
+      return isValue(v) ? +v : "";
+    }; // find format according to axis id
+
+
+    if (typeof data_labels.format === 'function') {
+      format = data_labels.format;
+    } else if (_typeof(data_labels.format) === 'object') {
+      if (data_labels.format[targetId]) {
+        format = data_labels.format[targetId] === true ? defaultFormat : data_labels.format[targetId];
+      } else {
+        format = function format() {
+          return '';
+        };
+      }
+    } else {
+      format = defaultFormat;
+    }
+
+    return format;
+  };
+
+  ChartInternal.prototype.initGrid = function () {
+    var $$ = this,
+        config = $$.config,
+        d3 = $$.d3;
+    $$.grid = $$.main.append('g').attr("clip-path", $$.clipPathForGrid).attr('class', CLASS.grid);
+
+    if (config.grid_x_show) {
+      $$.grid.append("g").attr("class", CLASS.xgrids);
+    }
+
+    if (config.grid_y_show) {
+      $$.grid.append('g').attr('class', CLASS.ygrids);
+    }
+
+    if (config.grid_focus_show) {
+      $$.grid.append('g').attr("class", CLASS.xgridFocus).append('line').attr('class', CLASS.xgridFocus);
+    }
+
+    $$.xgrid = d3.selectAll([]);
+
+    if (!config.grid_lines_front) {
+      $$.initGridLines();
+    }
+  };
+
+  ChartInternal.prototype.initGridLines = function () {
+    var $$ = this,
+        d3 = $$.d3;
+    $$.gridLines = $$.main.append('g').attr("clip-path", $$.clipPathForGrid).attr('class', CLASS.grid + ' ' + CLASS.gridLines);
+    $$.gridLines.append('g').attr("class", CLASS.xgridLines);
+    $$.gridLines.append('g').attr('class', CLASS.ygridLines);
+    $$.xgridLines = d3.selectAll([]);
+  };
+
+  ChartInternal.prototype.updateXGrid = function (withoutUpdate) {
+    var $$ = this,
+        config = $$.config,
+        d3 = $$.d3,
+        xgridData = $$.generateGridData(config.grid_x_type, $$.x),
+        tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
+    $$.xgridAttr = config.axis_rotated ? {
+      'x1': 0,
+      'x2': $$.width,
+      'y1': function y1(d) {
+        return $$.x(d) - tickOffset;
+      },
+      'y2': function y2(d) {
+        return $$.x(d) - tickOffset;
+      }
+    } : {
+      'x1': function x1(d) {
+        return $$.x(d) + tickOffset;
+      },
+      'x2': function x2(d) {
+        return $$.x(d) + tickOffset;
+      },
+      'y1': 0,
+      'y2': $$.height
+    };
+
+    $$.xgridAttr.opacity = function () {
+      var pos = +d3.select(this).attr(config.axis_rotated ? 'y1' : 'x1');
+      return pos === (config.axis_rotated ? $$.height : 0) ? 0 : 1;
+    };
+
+    var xgrid = $$.main.select('.' + CLASS.xgrids).selectAll('.' + CLASS.xgrid).data(xgridData);
+    var xgridEnter = xgrid.enter().append('line').attr("class", CLASS.xgrid).attr('x1', $$.xgridAttr.x1).attr('x2', $$.xgridAttr.x2).attr('y1', $$.xgridAttr.y1).attr('y2', $$.xgridAttr.y2).style("opacity", 0);
+    $$.xgrid = xgridEnter.merge(xgrid);
+
+    if (!withoutUpdate) {
+      $$.xgrid.attr('x1', $$.xgridAttr.x1).attr('x2', $$.xgridAttr.x2).attr('y1', $$.xgridAttr.y1).attr('y2', $$.xgridAttr.y2).style("opacity", $$.xgridAttr.opacity);
+    }
+
+    xgrid.exit().remove();
+  };
+
+  ChartInternal.prototype.updateYGrid = function () {
+    var $$ = this,
+        config = $$.config,
+        gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
+    var ygrid = $$.main.select('.' + CLASS.ygrids).selectAll('.' + CLASS.ygrid).data(gridValues);
+    var ygridEnter = ygrid.enter().append('line') // TODO: x1, x2, y1, y2, opacity need to be set here maybe
+    .attr('class', CLASS.ygrid);
+    $$.ygrid = ygridEnter.merge(ygrid);
+    $$.ygrid.attr("x1", config.axis_rotated ? $$.y : 0).attr("x2", config.axis_rotated ? $$.y : $$.width).attr("y1", config.axis_rotated ? 0 : $$.y).attr("y2", config.axis_rotated ? $$.height : $$.y);
+    ygrid.exit().remove();
+    $$.smoothLines($$.ygrid, 'grid');
+  };
+
+  ChartInternal.prototype.gridTextAnchor = function (d) {
+    return d.position ? d.position : "end";
+  };
+
+  ChartInternal.prototype.gridTextDx = function (d) {
+    return d.position === 'start' ? 4 : d.position === 'middle' ? 0 : -4;
+  };
+
+  ChartInternal.prototype.xGridTextX = function (d) {
+    return d.position === 'start' ? -this.height : d.position === 'middle' ? -this.height / 2 : 0;
+  };
+
+  ChartInternal.prototype.yGridTextX = function (d) {
+    return d.position === 'start' ? 0 : d.position === 'middle' ? this.width / 2 : this.width;
+  };
+
+  ChartInternal.prototype.updateGrid = function (duration) {
+    var $$ = this,
+        main = $$.main,
+        config = $$.config,
+        xgridLine,
+        xgridLineEnter,
+        ygridLine,
+        ygridLineEnter,
+        xv = $$.xv.bind($$),
+        yv = $$.yv.bind($$),
+        xGridTextX = $$.xGridTextX.bind($$),
+        yGridTextX = $$.yGridTextX.bind($$); // hide if arc type
+
+    $$.grid.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
+    main.select('line.' + CLASS.xgridFocus).style("visibility", "hidden");
+
+    if (config.grid_x_show) {
+      $$.updateXGrid();
+    }
+
+    xgridLine = main.select('.' + CLASS.xgridLines).selectAll('.' + CLASS.xgridLine).data(config.grid_x_lines); // enter
+
+    xgridLineEnter = xgridLine.enter().append('g').attr("class", function (d) {
+      return CLASS.xgridLine + (d['class'] ? ' ' + d['class'] : '');
+    });
+    xgridLineEnter.append('line').attr("x1", config.axis_rotated ? 0 : xv).attr("x2", config.axis_rotated ? $$.width : xv).attr("y1", config.axis_rotated ? xv : 0).attr("y2", config.axis_rotated ? xv : $$.height).style("opacity", 0);
+    xgridLineEnter.append('text').attr("text-anchor", $$.gridTextAnchor).attr("transform", config.axis_rotated ? "" : "rotate(-90)").attr("x", config.axis_rotated ? yGridTextX : xGridTextX).attr("y", xv).attr('dx', $$.gridTextDx).attr('dy', -5).style("opacity", 0); // udpate
+
+    $$.xgridLines = xgridLineEnter.merge(xgridLine); // done in d3.transition() of the end of this function
+    // exit
+
+    xgridLine.exit().transition().duration(duration).style("opacity", 0).remove(); // Y-Grid
+
+    if (config.grid_y_show) {
+      $$.updateYGrid();
+    }
+
+    ygridLine = main.select('.' + CLASS.ygridLines).selectAll('.' + CLASS.ygridLine).data(config.grid_y_lines); // enter
+
+    ygridLineEnter = ygridLine.enter().append('g').attr("class", function (d) {
+      return CLASS.ygridLine + (d['class'] ? ' ' + d['class'] : '');
+    });
+    ygridLineEnter.append('line').attr("x1", config.axis_rotated ? yv : 0).attr("x2", config.axis_rotated ? yv : $$.width).attr("y1", config.axis_rotated ? 0 : yv).attr("y2", config.axis_rotated ? $$.height : yv).style("opacity", 0);
+    ygridLineEnter.append('text').attr("text-anchor", $$.gridTextAnchor).attr("transform", config.axis_rotated ? "rotate(-90)" : "").attr("x", config.axis_rotated ? xGridTextX : yGridTextX).attr("y", yv).attr('dx', $$.gridTextDx).attr('dy', -5).style("opacity", 0); // update
+
+    $$.ygridLines = ygridLineEnter.merge(ygridLine);
+    $$.ygridLines.select('line').transition().duration(duration).attr("x1", config.axis_rotated ? yv : 0).attr("x2", config.axis_rotated ? yv : $$.width).attr("y1", config.axis_rotated ? 0 : yv).attr("y2", config.axis_rotated ? $$.height : yv).style("opacity", 1);
+    $$.ygridLines.select('text').transition().duration(duration).attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$)).attr("y", yv).text(function (d) {
+      return d.text;
+    }).style("opacity", 1); // exit
+
+    ygridLine.exit().transition().duration(duration).style("opacity", 0).remove();
+  };
+
+  ChartInternal.prototype.redrawGrid = function (withTransition, transition) {
+    var $$ = this,
+        config = $$.config,
+        xv = $$.xv.bind($$),
+        lines = $$.xgridLines.select('line'),
+        texts = $$.xgridLines.select('text');
+    return [(withTransition ? lines.transition(transition) : lines).attr("x1", config.axis_rotated ? 0 : xv).attr("x2", config.axis_rotated ? $$.width : xv).attr("y1", config.axis_rotated ? xv : 0).attr("y2", config.axis_rotated ? xv : $$.height).style("opacity", 1), (withTransition ? texts.transition(transition) : texts).attr("x", config.axis_rotated ? $$.yGridTextX.bind($$) : $$.xGridTextX.bind($$)).attr("y", xv).text(function (d) {
+      return d.text;
+    }).style("opacity", 1)];
+  };
+
+  ChartInternal.prototype.showXGridFocus = function (selectedData) {
+    var $$ = this,
+        config = $$.config,
+        dataToShow = selectedData.filter(function (d) {
+      return d && isValue(d.value);
+    }),
+        focusEl = $$.main.selectAll('line.' + CLASS.xgridFocus),
+        xx = $$.xx.bind($$);
+
+    if (!config.tooltip_show) {
+      return;
+    } // Hide when stanford plot exists
+
+
+    if ($$.hasType('stanford') || $$.hasArcType()) {
+      return;
+    }
+
+    focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(config.axis_rotated ? 'y1' : 'x1', xx).attr(config.axis_rotated ? 'y2' : 'x2', xx);
+    $$.smoothLines(focusEl, 'grid');
+  };
+
+  ChartInternal.prototype.hideXGridFocus = function () {
+    this.main.select('line.' + CLASS.xgridFocus).style("visibility", "hidden");
+  };
+
+  ChartInternal.prototype.updateXgridFocus = function () {
+    var $$ = this,
+        config = $$.config;
+    $$.main.select('line.' + CLASS.xgridFocus).attr("x1", config.axis_rotated ? 0 : -10).attr("x2", config.axis_rotated ? $$.width : -10).attr("y1", config.axis_rotated ? -10 : 0).attr("y2", config.axis_rotated ? -10 : $$.height);
+  };
+
+  ChartInternal.prototype.generateGridData = function (type, scale) {
+    var $$ = this,
+        gridData = [],
+        xDomain,
+        firstYear,
+        lastYear,
+        i,
+        tickNum = $$.main.select("." + CLASS.axisX).selectAll('.tick').size();
+
+    if (type === 'year') {
+      xDomain = $$.getXDomain();
+      firstYear = xDomain[0].getFullYear();
+      lastYear = xDomain[1].getFullYear();
+
+      for (i = firstYear; i <= lastYear; i++) {
+        gridData.push(new Date(i + '-01-01 00:00:00'));
+      }
+    } else {
+      gridData = scale.ticks(10);
+
+      if (gridData.length > tickNum) {
         // use only int
         gridData = gridData.filter(function (d) {
           return ("" + d).indexOf('.') < 0;
@@ -9071,7 +10203,132 @@
       var i;
 
       for (i = 0; i < regions.length; i++) {
-        if (regions[i].start < x && x <= regions[i].end)="" {="" return="" true;="" }="" false;="" check="" start="" end="" of="" regions="" if="" (isdefined(_regions))="" for="" (i="0;" i="" <="" _regions.length;="" i++)="" regions[i]="{};" (isundefined(_regions[i].start))="" regions[i].start="d[0].x;" else="" ?="" $$.parsedate(_regions[i].start)="" :="" _regions[i].start;="" (isundefined(_regions[i].end))="" regions[i].end="d[d.length" -="" 1].x;="" $$.parsedate(_regions[i].end)="" _regions[i].end;="" set="" scales="" xvalue="config.axis_rotated" function="" (d)="" y(d.value);="" x(d.x);="" };="" yvalue="config.axis_rotated" define="" svg="" generator="" region="" generatem(points)="" 'm'="" +="" points[0][0]="" '="" points[0][1]="" points[1][0]="" points[1][1];="" ($$.istimeseries())="" swithregion="function" swithregion(d0,="" d1,="" j,="" diff)="" var="" x0="d0.x.getTime()," x_diff="d1.x" d0.x,="" xv0="new" date(x0="" *="" j),="" xv1="new" (j="" diff)),="" points;="" (config.axis_rotated)="" points="[[y(yp(j))," x(xv0)],="" [y(yp(j="" x(xv1)]];="" y(yp(j))],="" [x(xv1),="" y(yp(j="" diff))]];="" generatem(points);="" true),="" x(xp(j))],="" diff),="" x(xp(j="" [x(xp(j="" generate="" d.length;="" draw="" as="" normal="" (isundefined(regions)="" ||="" !iswithinregions(d[i].x,="" regions))="" s="" xvalue(d[i])="" "="" yvalue(d[i]);="" with="" todo:="" fix="" horizotal="" charts="" xp="$$.getScale(d[i" 1].x="" xoffset,="" d[i].x="" $$.istimeseries());="" yp="$$.getScale(d[i" 1].value,="" d[i].value);="" dx="x(d[i].x)" x(d[i="" 1].x);="" dy="y(d[i].value)" y(d[i="" 1].value);="" dd="Math.sqrt(Math.pow(dx," 2)="" math.pow(dy,="" 2));="" diff="2" dd;="" diffx2="diff" 2;="" j="" 1],="" d[i],="" diff);="" prev="d[i].x;" s;="" chartinternal.prototype.updatearea="function" (durationforexit)="" $$="this," d3="$$.d3;" mainarea="$$.main.selectAll('.'" class.areas).selectall('.'="" class.area).data($$.linedata.bind($$));="" mainareaenter="mainArea.enter().append('path').attr("class"," $$.classarea.bind($$)).style("fill",="" $$.color).style("opacity",="" ()="" $$.orgareaopacity="+d3.select(this).style('opacity');" 0;="" });="" $$.mainarea="mainAreaEnter.merge(mainArea).style("opacity"," $$.orgareaopacity);="" mainarea.exit().transition().duration(durationforexit).style('opacity',="" 0);="" chartinternal.prototype.redrawarea="function" (drawarea,="" withtransition,="" transition)="" [(withtransition="" this.mainarea.transition(transition)="" this.mainarea).attr("d",="" drawarea).style("fill",="" this.color).style("opacity",="" this.orgareaopacity)];="" chartinternal.prototype.generatedrawarea="function" (areaindices,="" issub)="" config="$$.config," area="$$.d3.area()," getpoints="$$.generateGetAreaPoints(areaIndices," issub),="" yscalegetter="isSub" $$.getsubyscale="" $$.getyscale,="" xvalue(d)="" (issub="" $$.subxx="" $$.xx).call($$,="" d);="" },="" value0="function" value0(d,="" i)="" config.data_groups.length=""> 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
+        if (regions[i].start < x && x <= regions[i].end) {
+          return true;
+        }
+      }
+
+      return false;
+    } // Check start/end of regions
+
+
+    if (isDefined(_regions)) {
+      for (i = 0; i < _regions.length; i++) {
+        regions[i] = {};
+
+        if (isUndefined(_regions[i].start)) {
+          regions[i].start = d[0].x;
+        } else {
+          regions[i].start = $$.isTimeSeries() ? $$.parseDate(_regions[i].start) : _regions[i].start;
+        }
+
+        if (isUndefined(_regions[i].end)) {
+          regions[i].end = d[d.length - 1].x;
+        } else {
+          regions[i].end = $$.isTimeSeries() ? $$.parseDate(_regions[i].end) : _regions[i].end;
+        }
+      }
+    } // Set scales
+
+
+    xValue = config.axis_rotated ? function (d) {
+      return y(d.value);
+    } : function (d) {
+      return x(d.x);
+    };
+    yValue = config.axis_rotated ? function (d) {
+      return x(d.x);
+    } : function (d) {
+      return y(d.value);
+    }; // Define svg generator function for region
+
+    function generateM(points) {
+      return 'M' + points[0][0] + ' ' + points[0][1] + ' ' + points[1][0] + ' ' + points[1][1];
+    }
+
+    if ($$.isTimeSeries()) {
+      sWithRegion = function sWithRegion(d0, d1, j, diff) {
+        var x0 = d0.x.getTime(),
+            x_diff = d1.x - d0.x,
+            xv0 = new Date(x0 + x_diff * j),
+            xv1 = new Date(x0 + x_diff * (j + diff)),
+            points;
+
+        if (config.axis_rotated) {
+          points = [[y(yp(j)), x(xv0)], [y(yp(j + diff)), x(xv1)]];
+        } else {
+          points = [[x(xv0), y(yp(j))], [x(xv1), y(yp(j + diff))]];
+        }
+
+        return generateM(points);
+      };
+    } else {
+      sWithRegion = function sWithRegion(d0, d1, j, diff) {
+        var points;
+
+        if (config.axis_rotated) {
+          points = [[y(yp(j), true), x(xp(j))], [y(yp(j + diff), true), x(xp(j + diff))]];
+        } else {
+          points = [[x(xp(j), true), y(yp(j))], [x(xp(j + diff), true), y(yp(j + diff))]];
+        }
+
+        return generateM(points);
+      };
+    } // Generate
+
+
+    for (i = 0; i < d.length; i++) {
+      // Draw as normal
+      if (isUndefined(regions) || !isWithinRegions(d[i].x, regions)) {
+        s += " " + xValue(d[i]) + " " + yValue(d[i]);
+      } // Draw with region // TODO: Fix for horizotal charts
+      else {
+          xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries());
+          yp = $$.getScale(d[i - 1].value, d[i].value);
+          dx = x(d[i].x) - x(d[i - 1].x);
+          dy = y(d[i].value) - y(d[i - 1].value);
+          dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+          diff = 2 / dd;
+          diffx2 = diff * 2;
+
+          for (j = diff; j <= 1; j += diffx2) {
+            s += sWithRegion(d[i - 1], d[i], j, diff);
+          }
+        }
+
+      prev = d[i].x;
+    }
+
+    return s;
+  };
+
+  ChartInternal.prototype.updateArea = function (durationForExit) {
+    var $$ = this,
+        d3 = $$.d3;
+    var mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area).data($$.lineData.bind($$));
+    var mainAreaEnter = mainArea.enter().append('path').attr("class", $$.classArea.bind($$)).style("fill", $$.color).style("opacity", function () {
+      $$.orgAreaOpacity = +d3.select(this).style('opacity');
+      return 0;
+    });
+    $$.mainArea = mainAreaEnter.merge(mainArea).style("opacity", $$.orgAreaOpacity);
+    mainArea.exit().transition().duration(durationForExit).style('opacity', 0);
+  };
+
+  ChartInternal.prototype.redrawArea = function (drawArea, withTransition, transition) {
+    return [(withTransition ? this.mainArea.transition(transition) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", this.orgAreaOpacity)];
+  };
+
+  ChartInternal.prototype.generateDrawArea = function (areaIndices, isSub) {
+    var $$ = this,
+        config = $$.config,
+        area = $$.d3.area(),
+        getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
+        yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
+        xValue = function xValue(d) {
+      return (isSub ? $$.subxx : $$.xx).call($$, d);
+    },
+        value0 = function value0(d, i) {
+      return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
     },
         value1 = function value1(d, i) {
       return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
@@ -9976,7 +11233,7 @@
     var $$ = this,
         labelX = $$.axis.getLabelText('x'),
         labelY = $$.axis.getLabelText('y');
-    return "\n      <tr><th>".concat(labelX ? sanitise(labelX) : "x", "</th><th class="value">").concat(d.x, "</th></tr>\n      <tr><th>").concat(labelY ? sanitise(labelY) : "y", "</th><th class="value">").concat(d.value, "</th></tr>\n    ");
+    return "\n      <tr><th>".concat(labelX ? sanitise(labelX) : "x", "</th><th class='value'>").concat(d.x, "</th></tr>\n      <tr><th>").concat(labelY ? sanitise(labelY) : "y", "</th><th class='value'>").concat(d.value, "</th></tr>\n    ");
   };
 
   ChartInternal.prototype.countEpochsInRegion = function (region) {
@@ -10307,7 +11564,7 @@
         // Custom tooltip for stanford plots
         if (!text) {
           title = $$.getStanfordTooltipTitle(d[i]);
-          text = "<table class="" + $$.CLASS.tooltip + "">" + title;
+          text = "<table class='" + $$.CLASS.tooltip + "'>" + title;
         }
 
         bgcolor = $$.getStanfordPointColor(d[i]);
@@ -10318,7 +11575,7 @@
         // Regular tooltip
         if (!text) {
           title = sanitise(titleFormat ? titleFormat(d[i].x, d[i].index) : d[i].x);
-          text = "<table class="" + $$.CLASS.tooltip + "">" + (title || title === 0 ? "<tr><th colspan="2">" + title + "</th></tr>" : "");
+          text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
         }
 
         value = sanitise(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d));
@@ -10335,9 +11592,9 @@
       }
 
       if (value !== undefined) {
-        text += "<tr class="" + $$.CLASS.tooltipName + "-" + $$.getTargetSelectorSuffix(d[i].id) + "">";
-        text += "<td class="name"><span style="background-color:" + bgcolor + ""></span>" + name + "</td>";
-        text += "<td class="value">" + value + "</td>";
+        text += "<tr class='" + $$.CLASS.tooltipName + "-" + $$.getTargetSelectorSuffix(d[i].id) + "'>";
+        text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+        text += "<td class='value'>" + value + "</td>";
         text += "</tr>";
       }
     }
@@ -10720,4 +11977,3 @@
   return c3;
 
 })));
-</table></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=>

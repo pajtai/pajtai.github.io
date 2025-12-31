@@ -7,17 +7,18 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="If a bug can only be explained by an impossible event, then - almost always - your assumptions of what happened are wrong, and once in a blue moon, your understanding of the possible is incomplete. I">
-<meta name="keywords" content="logic,style">
 <meta property="og:type" content="article">
 <meta property="og:title" content="If it is impossible, it did not happen">
 <meta property="og:url" content="https://pajtai.github.io/if-it-is-impossible-it-did-not-happen/index.html">
 <meta property="og:site_name" content="Peter Ajtai">
 <meta property="og:description" content="If a bug can only be explained by an impossible event, then - almost always - your assumptions of what happened are wrong, and once in a blue moon, your understanding of the possible is incomplete. I">
-<meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2013-08-08T05:12:32.000Z">
+<meta property="og:locale">
+<meta property="article:published_time" content="2013-08-08T05:12:32.000Z">
+<meta property="article:modified_time" content="2013-08-08T05:12:32.000Z">
+<meta property="article:author" content="Peter Ajtai">
+<meta property="article:tag" content="logic">
+<meta property="article:tag" content="style">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="If it is impossible, it did not happen">
-<meta name="twitter:description" content="If a bug can only be explained by an impossible event, then - almost always - your assumptions of what happened are wrong, and once in a blue moon, your understanding of the possible is incomplete. I">
     
     
         
@@ -39,15 +40,19 @@
     <!-- title -->
     <title>If it is impossible, it did not happen</title>
     <!-- styles -->
-    <link rel="stylesheet" href="/css/style.css">
+    
+<link rel="stylesheet" href="/css/style.css">
+
     <!-- persian styles -->
     
-      <link rel="stylesheet" href="/css/rtl.css">
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
     
     <!-- rss -->
     
     
-</head>
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 <body class="max-width mx-auto px3 ltr">
     
@@ -135,7 +140,7 @@
       
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/logic/">logic</a>, <a class="tag-link" href="/tags/style/">style</a>
+        <a class="tag-link-link" href="/tags/logic/" rel="tag">logic</a>, <a class="tag-link-link" href="/tags/style/" rel="tag">style</a>
     </div>
 
 
@@ -149,16 +154,19 @@ of what happened are wrong, and once in a blue moon, your understanding of the p
 incomplete.</p>
 <p>I was working on a section of code in a large, old, and tangled code base. I passed a method three arguments, but the method only
 admitted to receiving two. The code looked something like this:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkPurchase</span>(<span class="params">item, price, budget</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(item + <span class="string">' - '</span> + price + <span class="string">' - '</span> + budget + <span class="string">' - '</span> + <span class="built_in">arguments</span>.length);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">checkPurchase(<span class="string">"item"</span>, <span class="string">"price"</span>, <span class="string">"budget"</span>);</span><br></pre></td></tr></table></figure>
-<p>The above always showed:
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item - price - undefined - 2</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">checkPurchase</span>(<span class="params">item, price, budget</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(item + <span class="string">&#x27; - &#x27;</span> + price + <span class="string">&#x27; - &#x27;</span> + budget + <span class="string">&#x27; - &#x27;</span> + <span class="variable language_">arguments</span>.<span class="property">length</span>);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"><span class="title function_">checkPurchase</span>(<span class="string">&quot;item&quot;</span>, <span class="string">&quot;price&quot;</span>, <span class="string">&quot;budget&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>The above always showed:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item - price - undefined - 2</span><br></pre></td></tr></table></figure>
+
 <p>This looks like some sort of horrible core JavaScript bug where arguments are being lost. Clearly
 this is approaching the level of impossible. After hunting around for a while, I realized
 the method was being spied on and called through, but only the first two of the arguments were being passed
 on, since the legacy code only had two arguments….. the spy had been baked into the code
 for some quick testing in an unrelated file and forgotten about…. so somewhere else in the
 codebase there was a:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> oldCheckPurchase = checkPurchase;</span><br><span class="line">checkPurchase = <span class="function"><span class="keyword">function</span>(<span class="params">item, price</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Do some checks etc here</span></span><br><span class="line">    ...</span><br><span class="line">    oldCheckPurchase(item, price);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> oldCheckPurchase = checkPurchase;</span><br><span class="line">checkPurchase = <span class="keyword">function</span>(<span class="params">item, price</span>) &#123;</span><br><span class="line">    <span class="comment">// Do some checks etc here</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="title function_">oldCheckPurchase</span>(item, price);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>So if the only possible solution for your bug is something close to impossible - like JavaScript
 randomly dropping the third argument of one specific method - then you probably failed to
 consider something much more likely.</p>
@@ -219,7 +227,7 @@ consider something much more likely.</p>
         
         <footer id="footer">
   <div class="footer-left">
-    Copyright &copy; 2020 Peter Ajtai
+    Copyright &copy; 2025 Peter Ajtai
   </div>
   <div class="footer-right">
     <nav>
@@ -239,32 +247,26 @@ consider something much more likely.</p>
 </footer>
 
     </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-
-<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML></script>
 </body>
 </html>
 <!-- styles -->
+
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
 <link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
+
 <!-- jquery -->
+
 <script src="/lib/jquery/jquery.min.js"></script>
+
+
 <script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
 <script src="/js/main.js"></script>
+
 <!-- search -->
 
 <!-- Google Analytics -->
